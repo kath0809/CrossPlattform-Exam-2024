@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
-export default function Index() {
+export default function StartPage() {
   return (
-    <View className="pt-20">
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View className="flex-1 justify-center items-center">
+      <ActivityIndicator size="large" color="orange" />
     </View>
   );
 }
