@@ -16,6 +16,7 @@ import {
 import { Octicons, AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
+import KeyboardComponent from "@/components/KeyboardComponent";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +36,7 @@ export default function SignIn() {
   };
 
   return (
-    <View className="flex-1">
+    <KeyboardComponent>
       <StatusBar style="dark" />
       <View
         style={{ paddingTop: hp(8), paddingHorizontal: wp(5) }}
@@ -167,6 +168,6 @@ export default function SignIn() {
           </View>
         </View>
       </View>
-    </View>
+    </KeyboardComponent>
   );
 }

@@ -1,9 +1,10 @@
-import { ActivityIndicator, Text, View } from "react-native";
+import LoadingComponent from "@/components/LoadingComponent";
+import {  View } from "react-native";
 
 export default function StartPage() {
   return (
     <View className="flex-1 justify-center items-center">
-      <ActivityIndicator size="large" color="orange" />
+      <LoadingComponent size={50} />
     </View>
   );
 }

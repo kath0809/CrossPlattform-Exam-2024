@@ -17,6 +17,7 @@ import { Octicons, Ionicons, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import * as ImagePicker from "expo-image-picker";
+import KeyboardComponent from "@/components/KeyboardComponent";
 
 export default function SignUp() {
   const [image, setImage] = useState<string>("");
@@ -41,6 +42,7 @@ export default function SignUp() {
   };
 
   const pickImage = async () => {
+    // TODO: Remove before delivery
     console.log("PickImage called");
     // First, ask for permission to access the user's gallery
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -65,7 +67,8 @@ export default function SignUp() {
   };
 
   return (
-    <View className="flex-1">
+    // KeyboardComponent is a custom component to let user scroll if the keyboard is open
+    <KeyboardComponent>
       <StatusBar style="dark" />
       <View
         style={{ paddingTop: hp(7), paddingHorizontal: wp(5) }}
@@ -204,6 +207,6 @@ export default function SignUp() {
           </View>
         </View>
       </View>
-    </View>
+    </KeyboardComponent>
   );
 }
