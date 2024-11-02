@@ -14,31 +14,48 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Octicons, Ionicons, Feather } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import * as ImagePicker from "expo-image-picker";
 import KeyboardComponent from "@/components/KeyboardComponent";
+import { register } from "@/api/authApi";
 
-export default function SignUp() {
-  const [image, setImage] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-
+const SignUp = () => {
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
   const usernameRef = useRef<string>("");
   const profileRef = useRef<string>("");
 
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<string | null>(null);
+
   const handleRegister = async () => {
     // Making it optional to upload a profile picture.
-    if (!emailRef.current || !passwordRef.current || !usernameRef.current) {
+    if (
+      !emailRef.current ||
+      !passwordRef.current ||
+      !usernameRef.current ||
+      !profileRef.current
+    ) {
       Alert.alert(
         "Could not register",
         "Please choose a username, email and password"
       );
       return;
     }
-    // Then, if bouth feilds are filled, call the login function
+    // Then, if both fields are filled, call the register function
+    setLoading(true);
+    let response = await register(
+      emailRef.current,
+      passwordRef.current,
+      usernameRef.current,
+      profileRef.current
+    );
+    setLoading(false);
+    console.log("got result", response);
+    if (!response.success) {
+      Alert.alert("Could not register", response.msg);
+    }
   };
 
   const pickImage = async () => {
@@ -49,20 +66,18 @@ export default function SignUp() {
     if (status !== "granted") {
       Alert.alert(
         "Permission denied",
-        "To upload a profile picture, you need to grant accsess to your gallery"
+        "To upload a profile picture, you need to grant access to your gallery"
       );
-      return;
     }
-    // Then, open the gallery and let the user pick an image
-    const result = await ImagePicker.launchImageLibraryAsync({
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-    // If the user cancels the image picker
-    if (!result.canceled && result.assets && result.assets.length > 0) {
+    if (!result.canceled) {
       setImage(result.assets[0].uri);
+      profileRef.current = result.assets[0].uri;
     }
   };
 
@@ -209,4 +224,6 @@ export default function SignUp() {
       </View>
     </KeyboardComponent>
   );
-}
+};
+
+export default SignUp;
