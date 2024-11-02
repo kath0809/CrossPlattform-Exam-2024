@@ -1,8 +1,18 @@
 Installed:
-expo vektor icons
-lottifies
+expo vektor icons(icons used in project)
+https://www.npmjs.com/package/@expo/vector-icons
+
+lottie-react-native(Loading animation)
+https://www.npmjs.com/package/lottie-react-native/v/5.0.1
+
 firebase
+https://firebase.google.com
+
 nativewind
+https://www.nativewind.dev/getting-started/expo-router
+
+react-native-responsive-screen
+https://www.npmjs.com/package/react-native-responsive-screen
 
 <!-- # Welcome to your Expo app 👋
 
