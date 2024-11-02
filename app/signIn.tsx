@@ -45,7 +45,7 @@ export default function SignIn() {
           <Image
             style={{ height: hp(25) }}
             resizeMode="contain"
-            source={require("../assets/images/logIn.png")}
+            source={require("../assets/images/signIn.png")}
             accessibilityLabel="Login Ilustration"
           />
         </View>

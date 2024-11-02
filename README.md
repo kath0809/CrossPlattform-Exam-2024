@@ -14,6 +14,9 @@ https://www.nativewind.dev/getting-started/expo-router
 react-native-responsive-screen
 https://www.npmjs.com/package/react-native-responsive-screen
 
+expo-image-picker (for image uploads)
+https://docs.expo.dev/versions/latest/sdk/imagepicker/
+
 <!-- # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
