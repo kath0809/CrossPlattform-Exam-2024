@@ -15,9 +15,9 @@ import {
 } from "react-native-responsive-screen";
 import { Octicons, Ionicons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import LoadingComponent from "@/components/LoadingComponent";
 import * as ImagePicker from "expo-image-picker";
 import KeyboardComponent from "@/components/KeyboardComponent";
+import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 
 const SignUp = () => {
@@ -32,7 +32,6 @@ const SignUp = () => {
   const { register } = useAuth();
 
   const handleRegister = async () => {
-    // Making it optional to upload a profile picture.
     if (
       !emailRef.current ||
       !passwordRef.current ||
@@ -70,8 +69,9 @@ const SignUp = () => {
         "Permission denied",
         "To upload a profile picture, you need to grant access to your gallery"
       );
+      return;
     }
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],

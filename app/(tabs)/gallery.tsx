@@ -1,5 +1,5 @@
 import { useAuth } from "@/providers/authContext";
-import { signOut } from "firebase/auth";
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 
 export default function Gallery() {

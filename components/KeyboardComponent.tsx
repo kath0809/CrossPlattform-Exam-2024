@@ -1,5 +1,6 @@
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { ReactNode } from "react";
+import React from "react";
 
 const ios = Platform.OS === "ios";
 export default function KeyboardComponent({
