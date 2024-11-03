@@ -4,6 +4,8 @@ https://www.npmjs.com/package/@expo/vector-icons
 
 lottie-react-native(Loading animation)
 https://www.npmjs.com/package/lottie-react-native/v/5.0.1
+Lottie for react(So loading animation can be run on web)
+https://www.npmjs.com/package/@lottiefiles/react-lottie-player
 
 firebase
 https://firebase.google.com
