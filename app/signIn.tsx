@@ -17,14 +17,19 @@ import { Octicons, AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import KeyboardComponent from "@/components/KeyboardComponent";
+import { useAuth } from "@/providers/authContext";
+
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
+  const { login } = useAuth();
   const router = useRouter();
 
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
 
+
+  
   const handleLogin = async () => {
     // First, check that email and/or password is not empty
     if (!emailRef.current || !passwordRef.current) {
@@ -32,7 +37,15 @@ export default function SignIn() {
       Alert.alert("Could not sign in", "Email and password are required");
       return;
     }
-    // Then, if bouth feilds are filled, call the login function
+    // Then, if both fields are filled, call the login function
+    setLoading(true);
+    const response = await login(emailRef.current, passwordRef.current);
+    setLoading(false);
+    if (!response.success) {
+      Alert.alert("Could not sign in", response.msg);
+    } else {
+      console.log("Login successful");
+    }
   };
 
   return (

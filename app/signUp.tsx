@@ -14,11 +14,11 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Octicons, Ionicons, Feather } from "@expo/vector-icons";
-import { router, useRouter } from "expo-router";
+import { router } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import * as ImagePicker from "expo-image-picker";
 import KeyboardComponent from "@/components/KeyboardComponent";
-import { register } from "@/api/authApi";
+import { useAuth } from "@/providers/authContext";
 
 const SignUp = () => {
   const emailRef = useRef<string>("");
@@ -28,6 +28,8 @@ const SignUp = () => {
 
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
+
+  const { register } = useAuth();
 
   const handleRegister = async () => {
     // Making it optional to upload a profile picture.

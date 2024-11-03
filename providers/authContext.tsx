@@ -5,25 +5,28 @@ import {
   useContext,
   ReactNode,
 } from "react";
-import { getAuth, User } from "firebase/auth";
 import {
-  register as registerAPI,
-  login as loginAPI,
-  logout as logoutAPI,
-} from "@/api/authApi";
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+} from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { db } from "@/firebaseConfig";
+import { setDoc, doc } from "firebase/firestore";
 
 const auth = getAuth();
 
 type AuthContextType = {
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; msg?: string; data?: any }>;
   logout: () => Promise<void>;
   register: (
     email: string,
     password: string,
     username: string,
     profileImage: string
-  ) => Promise<void>;
+  ) => Promise<{ success: boolean; msg?: string; data?: any }>;
   user?: string | null;
   isAuthenticated?: boolean;
 };
@@ -70,11 +73,18 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         login: async (email: string, password: string) => {
-          await loginAPI(email, password);
-          // The onAuthStateChanged listener will handle updating user state
+          try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+            return { success: true, data: response.user };
+          } catch (error: any) {
+            let msg = error.message;
+            if (msg.includes("(auth/user-not-found)")) msg = "User not found";
+            if (msg.includes("(auth/invalid-credential)")) msg = "Invalid credentials";
+            return { success: false, msg };
+          }
         },
         logout: async () => {
-          await logoutAPI();
+          await signOut(auth);
           // The onAuthStateChanged listener will handle updating user state
         },
         register: async (
@@ -83,8 +93,20 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
           username: string,
           profileImage: string
         ) => {
-          await registerAPI(email, password, username, profileImage);
-          // The onAuthStateChanged listener will handle updating user state
+          try {
+            const response = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, "users", response.user.uid), {
+              username,
+              profileImage,
+              userId: response.user.uid,
+            });
+            return { success: true, data: response.user };
+          } catch (error: any) {
+            let msg = error.message;
+            if (msg.includes("(auth/invalid-email)")) msg = "Invalid email";
+            if (msg.includes("(auth/email-already-in-use)")) msg = "Email already in use";
+            return { success: false, msg };
+          }
         },
         user: user?.email,
         isAuthenticated,

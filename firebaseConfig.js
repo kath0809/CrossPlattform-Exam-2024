@@ -3,10 +3,11 @@ import {
   getAuth,
   initializeAuth,
   browserLocalPersistence,
+  getReactNativePersistence,
 } from "firebase/auth";
 import { getFirestore, collection } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import firebaseConfig from "./firebaseEnv.js";
+import firebaseConfig from "./firebaseEnv";
 import { Platform } from "react-native";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -27,4 +28,5 @@ export { auth };
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-export default userRef = collection(db, "users");
+const userRef = collection(db, "users");
+export default userRef;
