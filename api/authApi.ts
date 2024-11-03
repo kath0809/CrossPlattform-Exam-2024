@@ -20,8 +20,8 @@ export const loginUser = async (
     return { success: true, data: response.user };
   } catch (error: any) {
     let msg = error.message;
-    if (msg.includes("(auth/user-not-found)")) msg = "User not found";
-    if (msg.includes("(auth/wrong-password)")) msg = "Incorrect password";
+    if (msg.includes("(auth/invalid-email)")) msg = "User not found";
+    if (msg.includes("(auth/invalid-credential)")) msg = "Invalid credentials";
     return { success: false, msg };
   }
 };

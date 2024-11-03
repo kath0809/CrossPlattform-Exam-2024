@@ -19,7 +19,6 @@ import LoadingComponent from "@/components/LoadingComponent";
 import KeyboardComponent from "@/components/KeyboardComponent";
 import { useAuth } from "@/providers/authContext";
 
-
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
   const { login } = useAuth();
@@ -28,8 +27,6 @@ export default function SignIn() {
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
 
-
-  
   const handleLogin = async () => {
     // First, check that email and/or password is not empty
     if (!emailRef.current || !passwordRef.current) {
