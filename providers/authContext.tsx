@@ -5,8 +5,19 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from "firebase/auth";
 import { loginUser, logoutUser, registerUser } from "@/api/authApi";
+import { db } from "@/firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
+
+interface User extends FirebaseUser {
+  username?: string;
+  profileImage?: string;
+}
 
 const auth = getAuth();
 
@@ -36,14 +47,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Got user ", user);
-      if (user) {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      //console.log("Got user ", user?.email);
+      if (firebaseUser) {
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
+        const extendedUser: User = { ...firebaseUser, ...userData };
+        setUser(extendedUser);
         setIsAuthenticated(true);
-        setUserState(user);
+        //console.log("Got user ",extendedUser.username, "with email",extendedUser.email);
+        //setUserState(user);
       } else {
-        setIsAuthenticated(false);
         setUserState(null);
+        setIsAuthenticated(false);
       }
     });
     return () => unsubscribe();
@@ -57,7 +73,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const login = async (email: string, password: string) => {
     const result = await loginUser(email, password);
     if (result.success && result.data) {
-      setUserState(result.data);
+      setUser(result.data);
+      setIsAuthenticated(true);
     }
     return result;
   };

@@ -19,6 +19,9 @@ https://www.npmjs.com/package/react-native-responsive-screen
 expo-image-picker (for image uploads)
 https://docs.expo.dev/versions/latest/sdk/imagepicker/
 
+expo image (For only loading image once, compared to react-native that will load again again)
+https://docs.expo.dev/versions/latest/sdk/image/
+
 <!-- # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
