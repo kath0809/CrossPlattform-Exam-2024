@@ -4,7 +4,7 @@ import { View, Text } from "react-native";
 const Post = () => {
   return (
     <View>
-      <Text></Text>
+      <Text>Add new post</Text>
     </View>
   );
 };
