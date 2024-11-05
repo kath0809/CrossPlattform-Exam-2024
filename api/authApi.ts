@@ -29,6 +29,7 @@ export const loginUser = async (
 // Function to handle user logout
 export const logoutUser = async (): Promise<void> => {
   await signOut(auth);
+  console.log("User logged out");
 };
 
 // Function to handle user registration

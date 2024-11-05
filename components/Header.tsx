@@ -74,7 +74,7 @@ export default function Header() {
     // Increase padding by +10 for Android screens.
     <View
       style={{ paddingTop: ios ? top : top + 10 }}
-      className="flex-row-reverse justify-between px-5 bg-teal-600 shadow pb-3 rounded-br-l"
+      className="flex-row-reverse justify-between px-5 bg-custom-babyblue shadow pb-3 rounded-br-l"
     >
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
         {/* Use expo image so that the image only gets loaded once */}
@@ -85,6 +85,9 @@ export default function Header() {
           transition={500}
         />
       </TouchableOpacity>
+      <Text className="text-neutral-800 text-lg font-bold mt-3">
+        Hi, {user?.username}
+      </Text>
 
       {/* Profile Modal */}
       <Modal
