@@ -13,17 +13,17 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Octicons, AntDesign } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
 import KeyboardComponent from "@/components/KeyboardComponent";
 import { useAuth } from "@/providers/authContext";
+import { auth } from "@/firebaseConfig";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
   const { login } = useAuth();
   const router = useRouter();
-
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
 
@@ -41,9 +41,10 @@ export default function SignIn() {
     if (!response.success) {
       Alert.alert("Could not sign in", response.msg);
     } else {
-      console.log("Login successful");
+      console.log("Login successfully with user: ", auth.currentUser?.displayName + " with email: ", auth.currentUser?.email);
     }
   };
+  // Smith@smith.com
 
   return (
     <KeyboardComponent>

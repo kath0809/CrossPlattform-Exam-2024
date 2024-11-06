@@ -4,36 +4,57 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   User,
+  updateProfile
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
 
 const auth = getAuth();
 
-// Function to handle user login
-export const loginUser = async (
+// Function to handle registration of new useer.
+export const registerUser = async (
   email: string,
-  password: string
+  password: string,
+  username: string,
+  profileImage: string
 ): Promise<{ success: boolean; msg?: string; data?: User }> => {
   try {
-    const response = await signInWithEmailAndPassword(auth, email, password);
+    // Opprett brukeren med e-post og passord
+    const response = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    // Oppdater brukerprofilen med displayName og photoURL
+    await updateProfile(response.user, {
+      displayName: username,
+      photoURL: profileImage,
+    });
+
+    // Lagre ekstra brukerinformasjon i Firestore under "users"-samlingen
+    await setDoc(doc(db, "users", response.user.uid), {
+      username,
+      profileImage,
+      userId: response.user.uid,
+    });
+
     return { success: true, data: response.user };
   } catch (error: any) {
+    console.log("Error registering user: ", error.message);
+
+    // Brukervennlige feilmeldinger
     let msg = error.message;
-    if (msg.includes("(auth/invalid-email)")) msg = "User not found";
-    if (msg.includes("(auth/invalid-credential)")) msg = "Invalid credentials";
+    if (msg.includes("(auth/invalid-email)"))
+      msg = "Invalid email, please try again";
+    if (msg.includes("(auth/email-already-in-use)"))
+      msg = "Email already in use, please provide another email";
+
     return { success: false, msg };
   }
 };
 
-// Function to handle user logout
-export const logoutUser = async (): Promise<void> => {
-  await signOut(auth);
-  console.log("User logged out");
-};
-
-// Function to handle user registration
-export const registerUser = async (
+/*export const registerUser = async (
   email: string,
   password: string,
   username: string,
@@ -45,18 +66,43 @@ export const registerUser = async (
       email,
       password
     );
-    // Store additional user information in Firestore
+
+    // Store newly registred user in firestore db under "users" collection
     await setDoc(doc(db, "users", response.user.uid), {
       username,
       profileImage,
       userId: response.user.uid,
     });
+    
     return { success: true, data: response.user };
   } catch (error: any) {
+    console.log("Error registering user: ", error.message);
+    // Handle user feedback
     let msg = error.message;
-    if (msg.includes("(auth/invalid-email)")) msg = "Invalid email";
+    if (msg.includes("(auth/invalid-email)"))
+      msg = "Invalid email, please try again";
     if (msg.includes("(auth/email-already-in-use)"))
-      msg = "Email already in use";
+      msg = "Email already in use, please provide another email";
+    return { success: false, msg };
+  }
+};*/
+
+// Function to handle user login
+export const loginUser = async (
+  email: string,
+  password: string
+): Promise<{ success: boolean; msg?: string; data?: User }> => {
+  try {
+    const response = await signInWithEmailAndPassword(auth, email, password);
+    return { success: true, data: response.user };
+  } catch (error: any) {
+    console.log("Error logging in user: ", error.message);
+    // Handle user feedback from internal error. This helps user to understand what went wrong
+    // Uses common console error from firebase auth to provide user feedback.
+    // If error from firebase is includes eg. "(auth/invalid-email)" then provide user friendly feedback to the screen.
+    let msg = error.message;
+    if (msg.includes("(auth/invalid-email)")) msg = "User not found";
+    if (msg.includes("(auth/invalid-credential)")) msg = "Invalid credentials";
     return { success: false, msg };
   }
 };
