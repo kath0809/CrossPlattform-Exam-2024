@@ -63,7 +63,7 @@ const Map = () => {
       </MapView>
       <View style={styles.buttonContainer}>
         <Pressable onPress={toggleLocation} style={styles.locationButton}>
-          <MaterialIcons name="my-location" size={24} color="white" />
+          <MaterialIcons name="my-location" size={24} color="black" />
           <Text style={styles.buttonText}>
             {showLocation ? "Hide My Location" : "Show My Location"}
           </Text>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   locationButton: {
-    backgroundColor: "teal",
+    backgroundColor: "#f5a442",
     borderRadius: 50,
     padding: 10,
     justifyContent: "center",
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   buttonText: {
-    color: "white",
+    color: "black",
     marginLeft: 10,
   },
 });

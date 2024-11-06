@@ -15,7 +15,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { blurhash } from "@/utils/common";
 import { useAuth } from "@/providers/authContext";
-import { Octicons } from "@expo/vector-icons";
+import { AntDesign, EvilIcons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const ios = Platform.OS === "ios"; // This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
@@ -82,7 +82,7 @@ export default function Header() {
           style={{ height: hp(4.5), aspectRatio: 1, borderRadius: 100 }}
           source={user?.profileImage}
           placeholder={{ blurhash }}
-          transition={500}
+          transition={200}
         />
       </TouchableOpacity>
       <Text className="text-neutral-800 text-lg font-bold mt-3">
@@ -98,7 +98,7 @@ export default function Header() {
           setIsModalVisible(false);
         }}
       >
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer, { backgroundColor: "#000000e5" }]}>
           <View style={styles.modalHeader}>
             <TouchableOpacity
               style={styles.button}
@@ -107,10 +107,18 @@ export default function Header() {
                 router.push("/post");
               }}
             >
-              <Octicons name="diff-added" size={24} color="black" />
+              <Octicons name="diff-added" size={24} color="#f5a442" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                setIsModalVisible(false);
+              }}
+            >
+              <AntDesign name="close" size={24} color="#f5a442" />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout} style={styles.button}>
-              <Octicons name="sign-out" size={24} color="black" />
+              <Octicons name="sign-out" size={24} color="#f5a442" />
             </TouchableOpacity>
           </View>
 
@@ -118,7 +126,7 @@ export default function Header() {
             {user?.username ? (
               <Text style={styles.modalTitle}>{user.username}</Text>
             ) : (
-              <Text style={styles.modalTitle}>Username: Not available</Text>
+              <Text style={styles.modalTitle}>Guest user</Text>
             )}
             <View>
               <Image
@@ -126,6 +134,8 @@ export default function Header() {
                   height: hp(20),
                   aspectRatio: 1,
                   borderRadius: 10,
+                  borderColor: "#f5a442",
+                  borderWidth: 2,
                 }}
                 source={user?.profileImage}
                 placeholder={{ blurhash }}
@@ -141,13 +151,6 @@ export default function Header() {
                 />
               ))}
             </View>
-
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -179,7 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "teal",
+    color: "#f5a442",
   },
   modalText: {
     fontSize: 18,
@@ -187,12 +190,12 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 20,
-    backgroundColor: "teal",
+    backgroundColor: "#f5a442",
     padding: 10,
     borderRadius: 5,
   },
   closeButtonText: {
-    color: "white",
+    color: "black",
     fontSize: 16,
   },
   button: {
