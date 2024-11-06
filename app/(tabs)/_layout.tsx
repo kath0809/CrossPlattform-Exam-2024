@@ -7,10 +7,10 @@ export default function _layout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "rgba(30, 83, 120, 1)",
-        tabBarInactiveTintColor: "rgba(0, 0, 0, 1)",
+        tabBarActiveTintColor: "#000000",
+        tabBarInactiveTintColor: "#000000",
         tabBarStyle: {
-          backgroundColor: "rgba(135, 215, 239, 0.69)",
+          backgroundColor: "#f5a442",
           borderTopWidth: 0,
           //height: 90,
           paddingTop: 10,

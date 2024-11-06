@@ -74,7 +74,7 @@ export default function Header() {
     // Increase padding by +10 for Android screens.
     <View
       style={{ paddingTop: ios ? top : top + 10 }}
-      className="flex-row-reverse justify-between px-5 bg-custom-babyblue shadow pb-3 rounded-br-l"
+      className="flex-row-reverse justify-between px-5 bg-custom-orange shadow pb-3 rounded-br-l"
     >
       <TouchableOpacity onPress={() => setIsModalVisible(true)}>
         {/* Use expo image so that the image only gets loaded once */}
@@ -122,7 +122,11 @@ export default function Header() {
             )}
             <View>
               <Image
-                style={{ height: hp(20), aspectRatio: 1, borderRadius: 100 }}
+                style={{
+                  height: hp(20),
+                  aspectRatio: 1,
+                  borderRadius: 10,
+                }}
                 source={user?.profileImage}
                 placeholder={{ blurhash }}
                 transition={500}

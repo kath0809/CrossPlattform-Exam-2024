@@ -32,7 +32,8 @@ https://docs.expo.dev/versions/latest/sdk/map-view/
 Bilder som brukes statisk i applikasjonen:
 - Log in siden: hentet fra freepik(6.11.2024)
 (https://www.freepik.com/free-photo/tattooed-young-man-with-pierced-ear-nose-holding-flower-bouquet-front-his-face_4371175.htm)
-Sign Up siden
+- Register siden: hentet fra freepik(6.11.2024)
+- (https://www.freepik.com/free-photo/tattooed-man-s-hand-holding-sunflower-against-grey-backdrop_4360805.htm#fromView=serie&position=1)
 
 <!-- # Welcome to your Expo app 👋
 
