@@ -20,7 +20,7 @@ import KeyboardComponent from "@/components/KeyboardComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 
-const SignUp = () => {
+export default function SignUp () {
   const emailRef = useRef<string>("");
   const passwordRef = useRef<string>("");
   const usernameRef = useRef<string>("");
