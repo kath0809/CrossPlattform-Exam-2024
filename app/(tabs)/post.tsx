@@ -20,7 +20,7 @@ export default function Post() {
       <View style={styles.backgroundContainer}>
         {/* Overlay Image */}
         <Image
-          source={require("../../assets/images/test-design.png")}
+          source={require("../../assets/images/signInBack.png")}
           style={styles.backgroundImage}
           resizeMode="cover"
         />

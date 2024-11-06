@@ -28,6 +28,12 @@ https://docs.expo.dev/versions/latest/sdk/map-view/
 
 
 
+## Images
+Bilder som brukes statisk i applikasjonen:
+- Log in siden: hentet fra freepik(6.11.2024)
+(https://www.freepik.com/free-photo/tattooed-young-man-with-pierced-ear-nose-holding-flower-bouquet-front-his-face_4371175.htm)
+Sign Up siden
+
 <!-- # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

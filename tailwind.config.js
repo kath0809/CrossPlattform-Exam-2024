@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         "custom-babyblue": "rgba(135, 215, 239, 0.69)",
+        "custom-orange": "#f5a442",
       },
     },
   },
