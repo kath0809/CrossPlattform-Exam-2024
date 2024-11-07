@@ -104,7 +104,7 @@ export default function Header() {
               style={styles.button}
               onPress={() => {
                 setIsModalVisible(false);
-                router.push("/post");
+                router.push("/newPost");
               }}
             >
               <Octicons name="diff-added" size={24} color="#f5a442" />

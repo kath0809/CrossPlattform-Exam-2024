@@ -35,7 +35,7 @@ export default function _layout() {
         }}
       />
       <Tabs.Screen
-        name="post"
+        name="newPost"
         options={{
           header: () => <Header />,
           title: "New Post",

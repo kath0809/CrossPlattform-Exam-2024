@@ -101,6 +101,15 @@ export default function SignUp () {
       Alert.alert("Login failed", loginResponse.msg);
     }
   };
+/*
+  const handlePickImage = async () => {
+    const imageUri = await pickImage();
+    if (imageUri) {
+      setImage(imageUri);
+      profileRef.current = imageUri; // Link image URI to the user profile ref
+    }
+  };
+*/
 
   const pickImage = async () => {
     console.log("PickImage called");
@@ -124,7 +133,6 @@ export default function SignUp () {
       profileRef.current = result.assets[0].uri;
     }
   };
-
   return (
     <View className="flex-1 bg-[#000000e5]">
       <StatusBar style="light" />
