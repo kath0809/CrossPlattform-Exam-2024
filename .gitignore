@@ -19,3 +19,4 @@ firebaseEnv.js
 
 expo-env.d.ts
 # @end expo-cli
+googleApiKeyEnv.js
