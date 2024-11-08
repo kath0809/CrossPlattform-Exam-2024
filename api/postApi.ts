@@ -21,6 +21,7 @@ export const createPost = async (post: PostData) => {
     const postWithImageData: PostData = {
       ...post,
       imageURL: postImageDownloadUrl,
+      createdAt: new Date(),
     };
     const docRef = await addDoc(collection(db, "posts"), postWithImageData);
     console.log("Document written with ID:", docRef.id);
@@ -34,7 +35,11 @@ export const getAllPosts = async () => {
   return queryResult.docs.map((doc) => {
     const data = doc.data();
     console.log(doc.data());
-    return { ...doc.data(), id: doc.id } as PostData;
+    return {
+      ...doc.data(),
+      id: doc.id,
+      createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+    } as PostData;
   });
 };
 

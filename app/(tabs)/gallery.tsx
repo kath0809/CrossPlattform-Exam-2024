@@ -10,8 +10,12 @@ export default function Gallery() {
 
   const getPostsFromBackend = async () => {
     const posts = await postApi.getAllPosts();
+    // Sorter på tittel
     const sortedPosts = posts.sort((a, b) => a.title.localeCompare(b.title));
     setPosts(sortedPosts);
+    /* Sorter på dato/tid */
+    //const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    //setPosts(sortedPosts);
   };
 
   useEffect(() => {

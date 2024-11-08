@@ -12,4 +12,5 @@ export interface PostData {
   likes: string[];
   isLiked: boolean;
   comments: string[];
+  createdAt: Date;
 }
