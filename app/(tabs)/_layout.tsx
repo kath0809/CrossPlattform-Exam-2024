@@ -30,6 +30,7 @@ export default function _layout() {
               color={color}
               accessibilityLabel="Gallery Tab"
               accessibilityHint="Navigate to the gallery view"
+              accessibilityRole="tab"
             />
           ),
         }}
@@ -47,6 +48,7 @@ export default function _layout() {
               color={color}
               accessibilityLabel="New Post Tab"
               accessibilityHint="Navigate to new post site"
+              accessibilityRole="tab"
             />
           ),
         }}

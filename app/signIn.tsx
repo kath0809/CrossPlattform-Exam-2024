@@ -115,6 +115,9 @@ export default function SignIn() {
                   <Text
                     style={{ fontSize: hp(2.7) }}
                     className="text-neutral-800 font-bold tracking-widest"
+                    accessibilityLabel="Sign in button"
+                    //accessibilityHint="Press to sign in"
+                    accessibilityHint="Sign in"
                   >
                     Sign In
                   </Text>
@@ -133,6 +136,9 @@ export default function SignIn() {
                 <Text
                   style={{ fontSize: hp(2) }}
                   className="font-bold text-custom-orange"
+                  accessibilityLabel="Go to sign up page"
+                  //accessibilityHint="Press to go to sign up page"
+                  accessibilityHint="Go to sign up page"
                 >
                   Sign Up
                 </Text>
