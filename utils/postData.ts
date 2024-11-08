@@ -1,6 +1,5 @@
 import { LocationObjectCoords } from "expo-location";
 
-
 // Interface for the data that will be provided to the server when a new post is created.
 export interface PostData {
   id: string;
@@ -14,6 +13,3 @@ export interface PostData {
   isLiked: boolean;
   comments: string[];
 }
-
-
-    
