@@ -203,6 +203,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
                       postCoordinates: postCoordinatesData.current,
                       comments: [],
                       likes: [],
+                      createdAt: new Date(),
                     };
 
                     await postApi.createPost(newPost);
