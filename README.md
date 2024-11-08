@@ -25,6 +25,7 @@ https://docs.expo.dev/versions/latest/sdk/image/
 Expo map (map)
 https://docs.expo.dev/versions/latest/sdk/map-view/
 + https://docs.expo.dev/versions/latest/sdk/location/
++ yarn add @teovilla/react-native-web-maps for web.
 
 
 

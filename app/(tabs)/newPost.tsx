@@ -49,7 +49,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setStatusText("Tillatelse til å bruke lokasjon ble ikke gitt");
+        setStatusText("Permission to access location was denied");
         return;
       }
     })();
@@ -58,7 +58,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
   const getLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      setStatusText("Tillatelse til å bruke lokasjon ble ikke gitt");
+      setStatusText("Permission to access location was denied");
       return;
     }
 
@@ -71,7 +71,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
     setLocation(locationAddress[0]);
   };
 
-  let text = "Dette blir en kul geolokasjon wow!";
+  let text = "";
   if (statusText) {
     text = statusText;
   } else if (location) {
@@ -98,6 +98,10 @@ export default function PostForm({ closeModal }: PostFormProps) {
             />
           </Modal>
           <Pressable
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Select image to upload"
+            accessibilityHint="Pick an image from gallery or take a picture"
             onPress={() => setIsCameraOpen(true)}
             className="rounded-3xl overflow-hidden w-full h-80 justify-center items-center border-custom-orange border-2"
           >
@@ -169,6 +173,9 @@ export default function PostForm({ closeModal }: PostFormProps) {
                 </View>
               ) : (
                 <TouchableOpacity
+                  accessible={true}
+                  accessibilityRole="button"
+                  accessibilityLabel="Upload post to gallery"
                   onPress={async () => {
                     const newPost: PostData = {
                       title: titleText,
@@ -205,6 +212,9 @@ export default function PostForm({ closeModal }: PostFormProps) {
             </View>
           </View>
           <Pressable
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel="Cancel post creation and go to gallery"
             className="flex-row justify-center py-4 bg-custom-orange rounded-xl"
             onPress={() => router.push("/(tabs)/gallery")}
           >
