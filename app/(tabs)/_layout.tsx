@@ -12,7 +12,6 @@ export default function _layout() {
         tabBarStyle: {
           backgroundColor: "#f5a442",
           borderTopWidth: 0,
-          //height: 90,
           paddingTop: 10,
         },
       }}
@@ -66,6 +65,7 @@ export default function _layout() {
               color={color}
               accessibilityLabel="Map Tab"
               accessibilityHint="Navigate to the map view"
+              accessibilityRole="tab"
             />
           ),
         }}
