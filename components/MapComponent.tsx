@@ -2,6 +2,7 @@ import React from "react";
 import { Platform, View } from "react-native";
 import MapView, { Marker, Region } from "react-native-maps";
 import WebMap from "@teovilla/react-native-web-maps";
+import { googleMapsApiKey } from "@/googleApiKeyEnv";
 
 interface MapComponentProps {
   children: React.ReactNode;
@@ -14,10 +15,11 @@ export default function MapComponent({
 }: MapComponentProps) {
   if (Platform.OS === "web") {
     return (
+      //@ts-ignore
       <WebMap
         provider="google"
         initialRegion={initialRegion}
-        googleMapsApiKey="AIzaSyAddBlXzYRbkeyVja0iDeV7rCs4VIhO4pg"
+        googleMapsApiKey={googleMapsApiKey}
         style={{
           width: "80%",
           height: "80%",

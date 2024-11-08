@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { MaterialIcons } from "@expo/vector-icons";
+import MapComponent from "@/components/MapComponent";
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
@@ -54,13 +55,20 @@ const Map = () => {
 
   return (
     <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        showsUserLocation={showLocation} // Show the user's location on the map if toggled
+      <MapComponent
+        initialRegion={
+          location
+            ? {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }
+            : undefined
+        }
       >
         {location && <Marker coordinate={location} title="My Location" />}
-      </MapView>
+      </MapComponent>
       <View style={styles.buttonContainer}>
         <Pressable onPress={toggleLocation} style={styles.locationButton}>
           <MaterialIcons name="my-location" size={24} color="black" />
@@ -76,43 +84,28 @@ const Map = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0", // Light background color for modern look
   },
   map: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden", // Ensure the map respects the border radius
-    shadowColor: "#000", // Shadow for modern look
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5, // Elevation for Android shadow
+    flex: 1,
   },
   buttonContainer: {
     position: "absolute",
     bottom: 20,
+    left: 20,
     right: 20,
-    flexDirection: "row",
     alignItems: "center",
   },
   locationButton: {
-    backgroundColor: "#f5a442",
-    borderRadius: 50,
-    padding: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5, // Elevation for Android shadow
-    shadowColor: "#000", // Shadow for modern look
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
     flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 5,
+    elevation: 2,
   },
   buttonText: {
-    color: "black",
     marginLeft: 10,
+    fontSize: 16,
   },
 });
 
