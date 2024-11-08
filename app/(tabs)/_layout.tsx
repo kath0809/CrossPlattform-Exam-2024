@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { Fontisto, Octicons } from "@expo/vector-icons";
-import Header from "@/components/Header";
+import ProfileHeader from "@/components/ProfileHeader";
 
 export default function _layout() {
   return (
@@ -19,7 +19,7 @@ export default function _layout() {
       <Tabs.Screen
         name="gallery"
         options={{
-          header: () => <Header />,
+          header: () => <ProfileHeader />,
           title: "Gallery",
           tabBarLabel: "",
           tabBarIcon: ({ size, color }) => (
@@ -37,7 +37,7 @@ export default function _layout() {
       <Tabs.Screen
         name="newPost"
         options={{
-          header: () => <Header />,
+          header: () => <ProfileHeader />,
           title: "New Post",
           tabBarLabel: "",
           tabBarIcon: ({ size, color }) => (
@@ -55,7 +55,7 @@ export default function _layout() {
       <Tabs.Screen
         name="map"
         options={{
-          header: () => <Header />,
+          header: () => <ProfileHeader />,
           title: "Map",
           tabBarLabel: "",
           tabBarIcon: ({ size, color }) => (

@@ -112,7 +112,6 @@ export default function SignUp () {
 */
 
   const pickImage = async () => {
-    console.log("PickImage called");
     // First, ask for permission to access the user's gallery
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {

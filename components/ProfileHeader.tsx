@@ -20,7 +20,7 @@ import { router } from "expo-router";
 
 const ios = Platform.OS === "ios"; // This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
 
-export default function Header() {
+export default function ProfileHeader() {
   const { top } = useSafeAreaInsets(); // This is the top padding for iSO devices.
   const { user, logout } = useAuth(); // This is the user object from the AuthContext.
   const [isModalVisible, setIsModalVisible] = useState(false);
