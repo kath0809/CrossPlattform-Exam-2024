@@ -8,16 +8,17 @@ type SelectImageModalProps = {
   setImage: (image: string) => void;
 };
 
-export default function SelectImageModal({ closeModal, setImage }: SelectImageModalProps) {
+export default function SelectImageModal({
+  closeModal,
+  setImage,
+}: SelectImageModalProps) {
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
@@ -41,7 +42,6 @@ export default function SelectImageModal({ closeModal, setImage }: SelectImageMo
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -58,6 +58,7 @@ export default function SelectImageModal({ closeModal, setImage }: SelectImageMo
   };
 
   return (
+    // CameraView screen.
     <View style={styles.container}>
       <CameraView
         style={styles.camera}
@@ -66,16 +67,16 @@ export default function SelectImageModal({ closeModal, setImage }: SelectImageMo
       >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={() => pickImage()}>
-            <Text style={styles.text}>Velg bilde</Text>
+            <Text style={styles.text}>Libary</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => captureImage()}
           >
-            <Text style={styles.text}>Snap!</Text>
+            <Text style={styles.text}>Picture</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => closeModal()}>
-            <Text style={styles.text}>Avbryt</Text>
+          <TouchableOpacity style={styles.button} onPress={closeModal}>
+            <Text style={styles.text}>Close</Text>
           </TouchableOpacity>
         </View>
       </CameraView>
@@ -113,3 +114,50 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+/* NEW */
+
+// import { useState } from "react";
+// import { CameraView, useCameraPermissions } from "expo-camera";
+// import * as ImagePicker from "expo-image-picker";
+
+// export function useImagePicker() {
+//   const [permission, requestPermission] = useCameraPermissions();
+//   const [cameraRef, setCameraRef] = useState<CameraView | null>(null);
+
+//   const checkPermissions = async () => {
+//     if (!permission) {
+//       await requestPermission();
+//     }
+//     return permission?.granted;
+//   };
+
+//   const captureImage = async (setImage: (image: string) => void) => {
+//     if (cameraRef) {
+//       const image = await cameraRef.takePictureAsync();
+//       if (image) {
+//         setImage(image.uri);
+//       }
+//     }
+//   };
+
+//   const pickImage = async (setImage: (image: string) => void) => {
+//     const result = await ImagePicker.launchImageLibraryAsync({
+//       mediaTypes: ImagePicker.MediaTypeOptions.All,
+//       allowsEditing: true,
+//       aspect: [4, 3],
+//       quality: 1,
+//     });
+
+//     if (!result.canceled) {
+//       setImage(result.assets[0].uri);
+//     }
+//   };
+
+//   return {
+//     checkPermissions,
+//     captureImage,
+//     pickImage,
+//     setCameraRef,
+//   };
+// }

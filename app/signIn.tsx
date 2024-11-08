@@ -70,7 +70,6 @@ export default function SignIn() {
             SIGN IN
           </Text>
           <View className="gap-4">
-            {/* Email Input */}
             <View
               style={{ height: hp(7) }}
               className="flex-row gap-4 px-4 bg-black/60 items-center rounded-xl"

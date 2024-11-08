@@ -1,6 +1,10 @@
 import { PostData } from "@/utils/postData";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import {
   Pressable,
   StyleSheet,
   TextInput,
@@ -9,19 +13,22 @@ import {
   Image,
   Modal,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
-import { EvilIcons } from "@expo/vector-icons";
-import SelectImageModal from "@/components/ImageModal";
-
+import { EvilIcons, MaterialIcons, Octicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import * as postApi from "@/api/newPostApi";
 import { useAuth } from "@/providers/authContext";
+import LoadingComponent from "@/components/LoadingComponent";
+import { router } from "expo-router";
+import SelectImageModal from "@/components/ImageModal";
 
 type PostFormProps = {
   closeModal: () => void;
 };
 
 export default function PostForm({ closeModal }: PostFormProps) {
+  const [loading, setLoading] = useState<boolean>(false);
   const [titleText, setTitleText] = useState("");
   const [descriptionText, setDescriptionText] = useState("");
   const [categoryText, setcategoryText] = useState("");
@@ -72,12 +79,15 @@ export default function PostForm({ closeModal }: PostFormProps) {
   }
 
   return (
-    <View style={styles.mainContainer}>
+    <View
+      style={{ paddingTop: hp(3), paddingHorizontal: wp(2) }}
+      className="flex-1 justify-center bg-[#181717e5]"
+    >
       <ScrollView
         keyboardDismissMode="interactive"
         automaticallyAdjustKeyboardInsets
       >
-        <View style={styles.contentContainer}>
+        <View className="w-full flex flex-col px-3 gap-6 ">
           <Modal visible={isCameraOpen} animationType="slide">
             <SelectImageModal
               closeModal={() => {
@@ -89,143 +99,364 @@ export default function PostForm({ closeModal }: PostFormProps) {
           </Modal>
           <Pressable
             onPress={() => setIsCameraOpen(true)}
-            style={styles.addImageBox}
+            className="rounded-3xl overflow-hidden w-full h-80 justify-center items-center border-custom-orange border-2"
           >
             {image ? (
               <Image
                 source={{ uri: image }}
                 style={{ resizeMode: "cover", width: "100%", height: 300 }}
-                alt="Hmmmmm"
               />
             ) : (
               <EvilIcons name="image" size={80} color="gray" />
             )}
           </Pressable>
-          <Text>{`${location?.street} ${location?.streetNumber} - ${location?.city}, ${location?.country}`}</Text>
-          <View style={styles.textFieldContainer}>
-            <Text style={styles.text}>Tittel</Text>
-            <TextInput
-              onChangeText={setTitleText}
-              value={titleText}
-              style={styles.textfield}
-              placeholder="Skriv inn tittel"
-            />
-          </View>
-          <View style={styles.textFieldContainer}>
-            <Text style={styles.text}>Beskrivelse</Text>
-            <TextInput
-              multiline
-              numberOfLines={3}
-              onChangeText={setDescriptionText}
-              value={descriptionText}
-              style={[styles.textfield, { height: 84 }]}
-              placeholder="Skriv inn beskrivelse"
-            />
-          </View>
-          <View style={styles.textFieldContainer}>
-            <Text style={styles.text}>Hashtags</Text>
-            <TextInput
-              onChangeText={setcategoryText}
-              value={categoryText}
-              style={styles.textfield}
-              placeholder="#kultur #natur #mat"
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <Pressable
-              style={styles.primaryButton}
-              onPress={async () => {
-                const newPost: PostData = {
-                  title: titleText,
-                  description: descriptionText,
-                  category: categoryText,
-                  id: `postName-${titleText}`,
-                  author: user?.username || "Aononymous",
-                  isLiked: false,
-                  imageURL: image || "",
-                  postCoordinates: postCoordinatesData.current,
-                  comments: [],
-                  likes: [],
-                };
+          <Text className=" text-neutral-100">
+            Location:{" "}
+            {location
+              ? `${location?.street} ${location?.streetNumber} - ${location?.city}, ${location?.country}`
+              : "No location available"}
+          </Text>
 
-                await postApi.createPost(newPost);
-                
-                setTitleText("");
-                setDescriptionText("");
-                setcategoryText("");
+          <View className="gap-4">
+            <View
+              style={{ height: hp(7) }}
+              className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+            >
+              <MaterialIcons name="title" size={hp(3)} color="#f5a442" />
+              <TextInput
+                onChangeText={setTitleText}
+                value={titleText}
+                placeholder="Title..."
+                placeholderTextColor={"gray"}
+                accessibilityLabel="Enter title"
+                style={{ color: "white", fontSize: hp(2) }}
+              />
+            </View>
+            <View
+              style={{ height: hp(7) }}
+              className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+            >
+              <Octicons name="pencil" size={hp(3)} color="#f5a442" />
+              <TextInput
+                onChangeText={setDescriptionText}
+                value={descriptionText}
+                placeholder="Write a description..."
+                placeholderTextColor={"gray"}
+                accessibilityLabel="Enter description"
+                multiline={true}
+                numberOfLines={5}
+                style={{ color: "white", fontSize: hp(2) }}
+              />
+            </View>
+            <View
+              style={{ height: hp(7) }}
+              className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+            >
+              <MaterialIcons name="category" size={hp(3)} color="#f5a442" />
+              <TextInput
+                onChangeText={setcategoryText}
+                value={categoryText}
+                placeholder="Category..."
+                placeholderTextColor={"gray"}
+                accessibilityLabel="Enter category"
+                style={{ color: "white", fontSize: hp(2) }}
+              />
+            </View>
+            <View>
+              {loading ? (
+                <View className="flex-row justify-center">
+                  <LoadingComponent size={wp(25)} />
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={async () => {
+                    const newPost: PostData = {
+                      title: titleText,
+                      description: descriptionText,
+                      category: categoryText,
+                      id: `postName-${titleText}`,
+                      author: user?.username || "Aononymous",
+                      isLiked: false,
+                      imageURL: image || "",
+                      postCoordinates: postCoordinatesData.current,
+                      comments: [],
+                      likes: [],
+                    };
+
+                    await postApi.createPost(newPost);
+                    setImage(null);
+                    setLocation(null);
+                    setTitleText("");
+                    setDescriptionText("");
+                    setcategoryText("");
+                    router.push("/(tabs)/gallery");
+                  }}
+                  style={{ height: hp(6.5) }}
+                  className="bg-custom-orange rounded-xl justify-center items-center"
+                >
+                  <Text
+                    style={{ fontSize: hp(2.7) }}
+                    className="text-neutral-800 font-bold tracking-widest"
+                  >
+                    Add new post
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </View>
+          <Pressable
+            className="flex-row justify-center py-4 bg-custom-orange rounded-xl"
+            onPress={() => router.push("/(tabs)/gallery")}
+          >
+            <Text
+              style={{
+                color: "#412E25",
               }}
             >
-              <Text style={{ color: "white" }}>Legg til post</Text>
-            </Pressable>
-            <Pressable
-              style={styles.secondaryButton}
-              onPress={() => closeModal()}
-            >
-              <Text
-                style={{
-                  color: "#412E25",
-                }}
-              >
-                Avbryt
-              </Text>
-            </Pressable>
-          </View>
+              Avbryt
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    height: "100%",
-    paddingTop: 72,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  contentContainer: {
-    width: "100%",
-    flexDirection: "column",
-    paddingHorizontal: 20,
-  },
-  textFieldContainer: {
-    paddingTop: 8,
-  },
-  addImageBox: {
-    borderRadius: 10,
-    overflow: "hidden",
-    width: "100%",
-    height: 300,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "gray",
-  },
-  text: {},
-  textfield: {
-    borderWidth: 1,
-    padding: 10,
-    marginTop: 2,
-    borderRadius: 5,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingTop: 32,
-  },
-  primaryButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 4,
-    backgroundColor: "#0096C7",
-  },
-  secondaryButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "gray",
-  },
-});
+/* NEW */
+// import React, { useState, useEffect, useRef } from "react";
+// import { PostData } from "@/utils/postData";
+// import { useImagePicker } from "@/components/ImageModal";
+// import { useAuth } from "@/providers/authContext";
+// import * as Location from "expo-location";
+// import {
+//   widthPercentageToDP as wp,
+//   heightPercentageToDP as hp,
+// } from "react-native-responsive-screen";
+// import * as postApi from "@/api/newPostApi";
+// import {
+//   Text,
+//   TouchableOpacity,
+//   View,
+//   ScrollView,
+//   TextInput,
+//   Image,
+//   Pressable,
+// } from "react-native";
+// import { EvilIcons, MaterialIcons, Octicons } from "@expo/vector-icons";
+// import LoadingComponent from "@/components/LoadingComponent";
+
+// export default function PostForm() {
+//   const [loading, setLoading] = useState<boolean>(false);
+//   const [titleText, setTitleText] = useState("");
+//   const [descriptionText, setDescriptionText] = useState("");
+//   const [categoryText, setcategoryText] = useState("");
+//   const [image, setImage] = useState<string | null>(null);
+//   const [statusText, setStatusText] = useState<string | null>(null);
+//   const [location, setLocation] =
+//     useState<Location.LocationGeocodedAddress | null>(null);
+//   const [showMenu, setShowMenu] = useState(false); // State to control the visibility of the menu
+//   const postCoordinatesData = useRef<Location.LocationObjectCoords | null>(
+//     null
+//   );
+
+//   const { user } = useAuth();
+//   const { checkPermissions, captureImage, pickImage, setCameraRef } =
+//     useImagePicker();
+
+//   useEffect(() => {
+//     (async () => {
+//       const { status } = await Location.requestForegroundPermissionsAsync();
+//       if (status !== "granted") {
+//         setStatusText("Permission to access location was denied");
+//         return;
+//       }
+//     })();
+//   }, []);
+
+//   const getLocation = async () => {
+//     const { status } = await Location.requestForegroundPermissionsAsync();
+//     if (status !== "granted") {
+//       setStatusText("Permission to access location was denied");
+//       return;
+//     }
+
+//     const currentLocation = await Location.getCurrentPositionAsync();
+//     postCoordinatesData.current = currentLocation.coords;
+//     const locationAddress = await Location.reverseGeocodeAsync({
+//       latitude: currentLocation.coords.latitude,
+//       longitude: currentLocation.coords.longitude,
+//     });
+//     setLocation(locationAddress[0]);
+//   };
+
+//   const handleOpenCamera = async () => {
+//     const hasPermission = await checkPermissions();
+//     if (hasPermission) {
+//       await captureImage(setImage);
+//       getLocation();
+//     }
+//   };
+
+//   const handlePickImage = async () => {
+//     await pickImage(setImage);
+//     getLocation();
+//   };
+
+//   return (
+//     <View
+//       style={{ paddingTop: hp(3), paddingHorizontal: wp(2) }}
+//       className="flex-1 justify-center bg-[#181717e5]"
+//     >
+//       <ScrollView
+//         keyboardDismissMode="interactive"
+//         automaticallyAdjustKeyboardInsets
+//       >
+//         <View className="w-full flex flex-col px-3 gap-6 ">
+//           <Pressable
+//             onPress={() => setShowMenu(!showMenu)} // Toggle menu visibility on press
+//             className="rounded-3xl overflow-hidden w-full h-80 justify-center items-center border-custom-orange border-2"
+//           >
+//             {image ? (
+//               <Image
+//                 source={{ uri: image }}
+//                 style={{ resizeMode: "cover", width: "100%", height: 300 }}
+//               />
+//             ) : (
+//               <EvilIcons name="image" size={80} color="gray" />
+//             )}
+//           </Pressable>
+
+//           {showMenu && (
+//             <View
+//               style={{
+//                 position: "absolute",
+//                 top: "50%", // Adjust position based on your layout
+//                 left: "10%", // Adjust position based on your layout
+//                 backgroundColor: "#333",
+//                 padding: 10,
+//                 borderRadius: 8,
+//                 zIndex: 1,
+//               }}
+//             >
+//               <TouchableOpacity
+//                 onPress={() => {
+//                   setShowMenu(false);
+//                   handleOpenCamera();
+//                 }}
+//                 style={{ padding: 10 }}
+//               >
+//                 <Text style={{ color: "white" }}>Take Picture</Text>
+//               </TouchableOpacity>
+//               <TouchableOpacity
+//                 onPress={() => {
+//                   setShowMenu(false);
+//                   handlePickImage();
+//                 }}
+//                 style={{ padding: 10 }}
+//               >
+//                 <Text style={{ color: "white" }}>Select from Gallery</Text>
+//               </TouchableOpacity>
+//               <TouchableOpacity
+//                 onPress={() => setShowMenu(false)}
+//                 style={{ padding: 10 }}
+//               >
+//                 <Text style={{ color: "white" }}>Cancel</Text>
+//               </TouchableOpacity>
+//             </View>
+//           )}
+
+//           <Text className="pt-2 text-neutral-100">
+//             Location:{" "}
+//             {location
+//               ? `${location?.street} ${location?.streetNumber} - ${location?.city}, ${location?.country}`
+//               : "No location available"}
+//           </Text>
+
+//           <View className="gap-4">
+//             <View
+//               style={{ height: hp(7) }}
+//               className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+//             >
+//               <MaterialIcons name="title" size={hp(3)} color="#f5a442" />
+//               <TextInput
+//                 onChangeText={setTitleText}
+//                 value={titleText}
+//                 placeholder="Title..."
+//                 placeholderTextColor={"gray"}
+//                 accessibilityLabel="Enter title"
+//                 style={{ color: "white" }}
+//               />
+//             </View>
+//             <View
+//               style={{ height: hp(7) }}
+//               className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+//             >
+//               <Octicons name="pencil" size={hp(3)} color="#f5a442" />
+//               <TextInput
+//                 onChangeText={setDescriptionText}
+//                 value={descriptionText}
+//                 placeholder="Write a description..."
+//                 placeholderTextColor={"gray"}
+//                 accessibilityLabel="Enter description"
+//                 style={{ color: "white" }}
+//               />
+//             </View>
+//             <View
+//               style={{ height: hp(7) }}
+//               className="flex-row gap-4 px-4 bg-black/40 items-center rounded-xl"
+//             >
+//               <MaterialIcons name="category" size={hp(3)} color="#f5a442" />
+//               <TextInput
+//                 onChangeText={setcategoryText}
+//                 value={categoryText}
+//                 placeholder="Category..."
+//                 placeholderTextColor={"gray"}
+//                 accessibilityLabel="Enter category"
+//                 style={{ color: "white" }}
+//               />
+//             </View>
+//             <View>
+//               {loading ? (
+//                 <View className="flex-row justify-center">
+//                   <LoadingComponent size={wp(25)} />
+//                 </View>
+//               ) : (
+//                 <TouchableOpacity
+//                   onPress={async () => {
+//                     const newPost: PostData = {
+//                       title: titleText,
+//                       description: descriptionText,
+//                       category: categoryText,
+//                       id: `postName-${titleText}`,
+//                       author: user?.username || "Anonymous",
+//                       isLiked: false,
+//                       imageURL: image || "",
+//                       postCoordinates: postCoordinatesData.current,
+//                       comments: [],
+//                       likes: [],
+//                     };
+
+//                     await postApi.createPost(newPost);
+
+//                     setTitleText("");
+//                     setDescriptionText("");
+//                     setcategoryText("");
+//                   }}
+//                   style={{ height: hp(6.5) }}
+//                   className="bg-custom-orange rounded-xl justify-center items-center"
+//                 >
+//                   <Text
+//                     style={{ fontSize: hp(2.7) }}
+//                     className="text-neutral-800 font-bold tracking-widest"
+//                   >
+//                     Add new post
+//                   </Text>
+//                 </TouchableOpacity>
+//               )}
+//             </View>
+//           </View>
+//         </View>
+//       </ScrollView>
+//     </View>
+//   );
+// }
