@@ -10,7 +10,7 @@ type FormInputProps = {
   numberOfLines?: number;
 };
 
-export default function FormInputComponent({
+export default function InputComponent({
   value,
   placeholder,
   onChangeText,
