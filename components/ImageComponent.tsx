@@ -1,24 +1,17 @@
+import React from "react";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Button,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
 
-// This code is copied from the lecture code.
+// TODO This code is copied from the lecture code.
 type ImageComponentPropsProps = {
   closeModal: () => void;
-  setImage: (images: string) => void;
-  // Accept an array of strings.
+  setImages: (uris: string[]) => void;
 };
 
 export default function ImageComponentProps({
   closeModal,
-  setImage,
+  setImages,
 }: ImageComponentPropsProps) {
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -43,7 +36,7 @@ export default function ImageComponentProps({
     if (camera) {
       const image = await camera.takePictureAsync();
       if (image) {
-        setImage(image.uri);
+        setImages([image.uri]);
         closeModal();
       }
     }
@@ -52,17 +45,19 @@ export default function ImageComponentProps({
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
+      allowsMultipleSelection: true,
+      selectionLimit: 3,
+      //allowsEditing: true,
+      //aspect: [4, 3],
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    if (!result.canceled && result.assets) {
+      setImages(result.assets.map(image => image.uri));
+
       closeModal();
     }
   };
-
 
   return (
     // CameraView screen.

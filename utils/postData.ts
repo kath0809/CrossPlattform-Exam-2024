@@ -5,7 +5,7 @@ export interface PostData {
   id: string;
   title: string;
   description: string;
-  imageURL: string;
+  imageURLs: string[];
   postCoordinates: LocationObjectCoords | null;
   category: string;
   author: string;

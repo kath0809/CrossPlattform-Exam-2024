@@ -8,19 +8,42 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { db, getDownloadUrl } from "@/firebaseConfig";
-import { uploadImageToFirebase } from "@/api/imageApi";
+import { uploadImagesToFirebase } from "@/api/imageApi";
 
+// export const createPost = async (post: PostData) => {
+//   try {
+//     const firebaseImage = await uploadImageToFirebase(post.imageURL);
+//     console.log("firebaseImage", firebaseImage);
+//     if (firebaseImage === "ERROR") {
+//       return;
+//     }
+//     const postImageDownloadUrl = await getDownloadUrl(firebaseImage); //
+//     const postWithImageData: PostData = {
+//       ...post,
+//       imageURL: postImageDownloadUrl,
+//       createdAt: new Date(),
+//     };
+//     const docRef = await addDoc(collection(db, "posts"), postWithImageData);
+//     console.log("Document written with ID:", docRef.id);
+//   } catch (e) {
+//     console.log("Error adding document", e);
+//   }
+// };
+
+/* The Code Above Works for single upload, lets try for multiple */
 export const createPost = async (post: PostData) => {
   try {
-    const firebaseImage = await uploadImageToFirebase(post.imageURL);
-    console.log("firebaseImage", firebaseImage);
-    if (firebaseImage === "ERROR") {
+    const firebaseImages = await uploadImagesToFirebase(post.imageURLs);
+    console.log("firebaseImages", firebaseImages);
+    if (firebaseImages.includes("ERROR")) {
       return;
     }
-    const postImageDownloadUrl = await getDownloadUrl(firebaseImage); //
+    const postImageDownloadUrls = await Promise.all(
+      firebaseImages.map((firebaseImage) => getDownloadUrl(firebaseImage))
+    );
     const postWithImageData: PostData = {
       ...post,
-      imageURL: postImageDownloadUrl,
+      imageURLs: postImageDownloadUrls,
       createdAt: new Date(),
     };
     const docRef = await addDoc(collection(db, "posts"), postWithImageData);

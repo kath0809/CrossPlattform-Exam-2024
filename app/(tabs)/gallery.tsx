@@ -1,12 +1,10 @@
 import { PostData } from "@/utils/postData";
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { View, Text, Image, FlatList, StyleSheet, ScrollView } from "react-native";
 import * as postApi from "@/api/postApi";
 
 export default function Gallery() {
   const [posts, setPosts] = useState<PostData[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isUpsertUserModalOpen, setIsUpsertUserModalOpen] = useState(false);
 
   const getPostsFromBackend = async () => {
     const posts = await postApi.getAllPosts();
@@ -24,20 +22,34 @@ export default function Gallery() {
 
   const renderItem = ({ item }: { item: PostData }) => (
     <View style={styles.postContainer}>
-      <Text className="pb-1" style={styles.author}>by {item.author}</Text>
-      <Image source={{ uri: item.imageURL }} style={styles.image} />
+      <Text className="pb-1" style={styles.author}>
+        by {item.author}
+      </Text>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        style={styles.carousel}
+      >
+        {item.imageURLs && item.imageURLs.length > 0
+          ? item.imageURLs.map((uri, index) => (
+              <Image key={index} source={{ uri }} style={styles.image} />
+            ))
+          : item.imageURL && (
+              <Image source={{ uri: item.imageURL }} style={styles.image} />
+            )}
+      </ScrollView>
+
       <Text style={styles.title}>{item.title}</Text>
     </View>
   );
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={posts}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+    <ScrollView>
+      {posts.map((post) => (
+        <View key={post.id}>{renderItem({ item: post })}</View>
+      ))}
+    </ScrollView>
   );
 }
 
@@ -54,9 +66,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   image: {
-    width: "100%",
+    width: 300, // Width of each image in the carousel
     height: 200,
-    borderRadius: 8,
+    borderRadius: 10,
+    marginRight: 10,
   },
   title: {
     fontSize: 18,
@@ -71,5 +84,8 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     marginTop: 8,
+  },
+  carousel: {
+    height: 200,
   },
 });
