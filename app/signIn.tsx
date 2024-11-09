@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Pressable,
   Alert,
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -19,24 +20,25 @@ import LoadingComponent from "@/components/LoadingComponent";
 import KeyboardComponent from "@/components/KeyboardComponent";
 import { useAuth } from "@/providers/authContext";
 import { auth } from "@/firebaseConfig";
+import InputComponent from "@/components/InputComponent";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
   const { login } = useAuth();
   const router = useRouter();
-  const emailRef = useRef<string>("");
-  const passwordRef = useRef<string>("");
+const [email, setEmail] = useState<string>("");
+const [password, setPassword] = useState<string>("");
 
   const handleLogin = async () => {
     // First, check that email and/or password is not empty
-    if (!emailRef.current || !passwordRef.current) {
+    if (!email || !password) {
       // Using react-native Alert to handle user feedbacks
       Alert.alert("Could not sign in", "Email and password are required");
       return;
     }
     // Then, if both fields are filled, call the login function
     setLoading(true);
-    const response = await login(emailRef.current, passwordRef.current);
+    const response = await login(email, password);
     setLoading(false);
     if (!response.success) {
       Alert.alert("Could not sign in", response.msg);
@@ -58,7 +60,11 @@ export default function SignIn() {
         className="absolute w-full h-full opacity-30"
         accessibilityLabel="Cover image"
       />
-      <KeyboardComponent>
+      <ScrollView
+        keyboardDismissMode="interactive"
+        automaticallyAdjustKeyboardInsets
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
         <View
           style={{ paddingTop: hp(30), paddingHorizontal: wp(5) }}
           className="flex-1 justify-center gap-6"
@@ -70,36 +76,21 @@ export default function SignIn() {
             SIGN IN
           </Text>
           <View className="gap-4">
-            <View
-              style={{ height: hp(7) }}
-              className="flex-row gap-4 px-4 bg-black/60 items-center rounded-xl"
-            >
-              <Octicons name="mail" size={hp(3)} color="#f5a442" />
-              <TextInput
-                onChangeText={(value) => (emailRef.current = value)}
-                style={{ fontSize: hp(2.5), color: "white" }}
-                className="flex-1"
-                placeholder="Enter your email"
-                placeholderTextColor="gray"
-                accessibilityLabel="Enter username"
-              ></TextInput>
-            </View>
-            <View className="gap-3">
-              <View
-                style={{ height: hp(7) }}
-                className="flex-row gap-4 px-4 bg-black/60 items-center rounded-xl"
-              >
-                <Octicons name="lock" size={hp(3)} color="#f5a442" />
-                <TextInput
-                  onChangeText={(value) => (passwordRef.current = value)}
-                  style={{ fontSize: hp(2.5), color: "white" }}
-                  className="flex-1"
-                  placeholder="Enter password"
-                  placeholderTextColor="gray"
-                  secureTextEntry={true}
-                  accessibilityLabel="Enter password"
-                ></TextInput>
-              </View>
+            <InputComponent
+              value={email}
+              placeholder="Enter your email"
+              onChangeText={setEmail}
+              icon={<Octicons name="mail" size={hp(3)} color="#f5a442" />}
+              accessibilityLabel="Enter username"
+            />
+            <InputComponent
+              value={password}
+              placeholder="Enter password"
+              onChangeText={setPassword}
+              icon={<Octicons name="lock" size={hp(3)} color="#f5a442" />}
+              secureTextEntry={true}
+              accessibilityLabel="Enter password"
+            />
             </View>
             <View>
               {loading ? (
@@ -116,7 +107,6 @@ export default function SignIn() {
                     style={{ fontSize: hp(2.7) }}
                     className="text-neutral-800 font-bold tracking-widest"
                     accessibilityLabel="Sign in button"
-                    //accessibilityHint="Press to sign in"
                     accessibilityHint="Sign in"
                   >
                     Sign In
@@ -137,16 +127,15 @@ export default function SignIn() {
                   style={{ fontSize: hp(2) }}
                   className="font-bold text-custom-orange"
                   accessibilityLabel="Go to sign up page"
-                  //accessibilityHint="Press to go to sign up page"
-                  accessibilityHint="Go to sign up page"
+                  accessibilityHint="Press to sign up"
+                  accessibilityRole="button"
                 >
                   Sign Up
                 </Text>
               </Pressable>
             </View>
           </View>
-        </View>
-      </KeyboardComponent>
+        </ScrollView>
     </View>
   );
 }

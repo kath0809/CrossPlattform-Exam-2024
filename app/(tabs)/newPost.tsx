@@ -1,12 +1,11 @@
 import { PostData } from "@/utils/postData";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import {
   Pressable,
-  TextInput,
   Text,
   View,
   Image,
@@ -16,7 +15,6 @@ import {
   Alert,
 } from "react-native";
 import { EvilIcons, MaterialIcons, Octicons } from "@expo/vector-icons";
-import * as Location from "expo-location";
 import * as postApi from "@/api/postApi";
 import { useAuth } from "@/providers/authContext";
 import LoadingComponent from "@/components/LoadingComponent";
@@ -41,7 +39,8 @@ export default function PostForm({ closeModal }: PostFormProps) {
   const [categoryText, setcategoryText] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const { coordinates, locationAddress, statusText, getLocation } = useLocation();
+  const { coordinates, locationAddress, statusText, getLocation } =
+    useLocation();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)", // Dark transparent background
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 1,
@@ -115,7 +114,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
           <Text className="text-neutral-100">
             Location:{" "}
             {locationAddress
-              ? `${locationAddress?.street} ${locationAddress?.streetNumber} - ${locationAddress?.city}, ${locationAddress?.country}`
+              ? `${locationAddress?.city}, ${locationAddress?.country}`
               : "No location available"}
           </Text>
 

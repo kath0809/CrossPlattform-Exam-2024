@@ -4,10 +4,13 @@ import { View, TextInput } from "react-native";
 type FormInputProps = {
   value: string;
   placeholder: string;
-  onChangeText: (text: string) => void;
+  onChangeText?: (text: string) => void;
   icon: React.ReactNode;
   multiline?: boolean;
   numberOfLines?: number;
+  secureTextEntry?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 };
 
 export default function InputComponent({
@@ -17,6 +20,9 @@ export default function InputComponent({
   icon,
   multiline = false,
   numberOfLines = 1,
+  secureTextEntry = false,
+  accessibilityLabel,
+  accessibilityHint,
 }: FormInputProps) {
   return (
     <View
@@ -32,6 +38,9 @@ export default function InputComponent({
         style={{ color: "white", fontSize: 18 }}
         multiline={multiline}
         numberOfLines={numberOfLines}
+        secureTextEntry={secureTextEntry}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityHint={accessibilityHint}
       />
     </View>
   );

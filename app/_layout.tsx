@@ -26,6 +26,7 @@ const MainLayout = () => {
 export default function RootLayout() {
   return (
     // Wrap the AuthContextProvider around the MainLayout component to ensure that the AuthContextProvider is available to all child components.
+    
     <AuthContextProvider>
       <MainLayout />
     </AuthContextProvider>
