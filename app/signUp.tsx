@@ -22,7 +22,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 import InputComponent from "@/components/InputComponent";
 
-export default function SignUp () {
+export default function SignUp() {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -60,8 +60,7 @@ export default function SignUp () {
   }; */
 
   const handleRegister = async () => {
-    if (
-      !email || !password || !username || !profileImage ) {
+    if (!email || !password || !username || !profileImage) {
       Alert.alert(
         "Could not register",
         "Please fill in all fields to register"
@@ -111,7 +110,7 @@ export default function SignUp () {
       aspect: [4, 3],
       quality: 1,
     });
-    
+
     if (!result.canceled) {
       setImage(result.assets[0].uri);
       setProfileImage(result.assets[0].uri);
@@ -121,6 +120,23 @@ export default function SignUp () {
   return (
     <View className="flex-1 bg-[#000000e5]">
       <StatusBar style="light" />
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1,
+          }}
+        >
+          <LoadingComponent size={wp(25)} />
+        </View>
+      )}
       <Image
         source={require("../assets/images/registerBack.png")}
         resizeMode="cover"
@@ -143,35 +159,32 @@ export default function SignUp () {
             REGISTER
           </Text>
           <View className="gap-4">
-            
-              <InputComponent
-                accessibilityLabel="Username"
-                accessibilityHint="Enter your desired username"
-                value={username}
-                placeholder="Enter a username..."
-                onChangeText={setUsername}
-                icon={<Ionicons name="person" size={24} color="#f5a442" />}
-              />
-              <InputComponent
-                accessibilityLabel="Email"
-                accessibilityHint="Enter your email address"
-                value={email}
-                placeholder="Enter your email..."
-                onChangeText={setEmail}
-                icon={<Octicons name="mail" size={24} color="#f5a442" />}
-              />
-              <InputComponent
-                accessibilityLabel="Password"
-                accessibilityHint="Enter a password"
-                value={password}
-                placeholder="Select a password..."
-                secureTextEntry={true}
-                onChangeText={setPassword}
-                icon={<Octicons name="lock" size={24} color="#f5a442" />}
-              />
-              <TouchableOpacity
-                onPress={pickImage}
-              >
+            <InputComponent
+              accessibilityLabel="Username"
+              accessibilityHint="Enter your desired username"
+              value={username}
+              placeholder="Enter a username..."
+              onChangeText={setUsername}
+              icon={<Ionicons name="person" size={24} color="#f5a442" />}
+            />
+            <InputComponent
+              accessibilityLabel="Email"
+              accessibilityHint="Enter your email address"
+              value={email}
+              placeholder="Enter your email..."
+              onChangeText={setEmail}
+              icon={<Octicons name="mail" size={24} color="#f5a442" />}
+            />
+            <InputComponent
+              accessibilityLabel="Password"
+              accessibilityHint="Enter a password"
+              value={password}
+              placeholder="Select a password..."
+              secureTextEntry={true}
+              onChangeText={setPassword}
+              icon={<Octicons name="lock" size={24} color="#f5a442" />}
+            />
+            <TouchableOpacity onPress={pickImage}>
               <InputComponent
                 accessibilityLabel="Profile picture"
                 accessibilityHint="Select a profile picture"
@@ -179,47 +192,41 @@ export default function SignUp () {
                 placeholder="Upload profile picture..."
                 icon={<Feather name="image" size={24} color="#f5a442" />}
               />
-              </TouchableOpacity>
-            </View>
-            <View>
-              {loading ? (
-                <View className="flex-row justify-center">
-                  <LoadingComponent size={wp(25)} />
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={handleRegister}
-                  style={{ height: hp(6.5) }}
-                  className="bg-custom-orange rounded-xl justify-center items-center"
-                >
-                  <Text
-                    style={{ fontSize: hp(2.7) }}
-                    className="text-neutral-800 font-bold tracking-widest"
-                  >
-                    Register
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity
+              onPress={handleRegister}
+              style={{ height: hp(6.5) }}
+              className="bg-custom-orange rounded-xl justify-center items-center"
+            >
+              <Text
+                style={{ fontSize: hp(2.7) }}
+                className="text-neutral-800 font-bold tracking-widest"
+              >
+                Register
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-            <View className="flex-row justify-center">
+          <View className="flex-row justify-center">
+            <Text
+              style={{ fontSize: hp(2) }}
+              className="font-medium text-neutral-200"
+            >
+              Already have an account?{" "}
+            </Text>
+            <Pressable onPress={() => router.push("/signIn")}>
               <Text
                 style={{ fontSize: hp(2) }}
-                className="font-medium text-neutral-200"
+                className="font-bold text-custom-orange"
               >
-                Already have an account?{" "}
+                Sign In
               </Text>
-              <Pressable onPress={() => router.push("/signIn")}>
-                <Text
-                  style={{ fontSize: hp(2) }}
-                  className="font-bold text-custom-orange"
-                >
-                  Sign In
-                </Text>
-              </Pressable>
-            </View>
+            </Pressable>
           </View>
+        </View>
       </ScrollView>
     </View>
   );
-};
+}

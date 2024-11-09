@@ -54,6 +54,23 @@ const [password, setPassword] = useState<string>("");
   return (
     <View className="flex-1 bg-[#000000e5]">
       <StatusBar style="light" />
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1,
+          }}
+        >
+          <LoadingComponent size={wp(25)} />
+        </View>
+      )}
       <Image
         source={require("../assets/images/signInBack.png")}
         resizeMode="cover"
@@ -91,51 +108,45 @@ const [password, setPassword] = useState<string>("");
               secureTextEntry={true}
               accessibilityLabel="Enter password"
             />
-            </View>
-            <View>
-              {loading ? (
-                <View className="flex-row justify-center">
-                  <LoadingComponent size={wp(25)} />
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={handleLogin}
-                  style={{ height: hp(6.5) }}
-                  className="bg-custom-orange rounded-xl justify-center items-center"
+          </View>
+          <View>
+              <TouchableOpacity
+                onPress={handleLogin}
+                style={{ height: hp(6.5) }}
+                className="bg-custom-orange rounded-xl justify-center items-center"
+              >
+                <Text
+                  style={{ fontSize: hp(2.7) }}
+                  className="text-neutral-800 font-bold tracking-widest"
+                  accessibilityLabel="Sign in button"
+                  accessibilityHint="Sign in"
                 >
-                  <Text
-                    style={{ fontSize: hp(2.7) }}
-                    className="text-neutral-800 font-bold tracking-widest"
-                    accessibilityLabel="Sign in button"
-                    accessibilityHint="Sign in"
-                  >
-                    Sign In
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
+                  Sign In
+                </Text>
+              </TouchableOpacity>
+          </View>
 
-            <View className="flex-row justify-center">
+          <View className="flex-row justify-center">
+            <Text
+              style={{ fontSize: hp(2) }}
+              className="font-medium text-neutral-200"
+            >
+              Don't have an account?{" "}
+            </Text>
+            <Pressable onPress={() => router.push("/signUp")}>
               <Text
                 style={{ fontSize: hp(2) }}
-                className="font-medium text-neutral-200"
+                className="font-bold text-custom-orange"
+                accessibilityLabel="Go to sign up page"
+                accessibilityHint="Press to sign up"
+                accessibilityRole="button"
               >
-                Don't have an account?{" "}
+                Sign Up
               </Text>
-              <Pressable onPress={() => router.push("/signUp")}>
-                <Text
-                  style={{ fontSize: hp(2) }}
-                  className="font-bold text-custom-orange"
-                  accessibilityLabel="Go to sign up page"
-                  accessibilityHint="Press to sign up"
-                  accessibilityRole="button"
-                >
-                  Sign Up
-                </Text>
-              </Pressable>
-            </View>
+            </Pressable>
           </View>
-        </ScrollView>
+        </View>
+      </ScrollView>
     </View>
   );
 }
