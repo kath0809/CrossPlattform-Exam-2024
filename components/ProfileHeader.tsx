@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
+  Alert,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -15,7 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { blurhash } from "@/utils/common";
 import { useAuth } from "@/providers/authContext";
-import { AntDesign, EvilIcons, Octicons } from "@expo/vector-icons";
+import { AntDesign, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const ios = Platform.OS === "ios"; // This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
@@ -26,8 +27,22 @@ export default function ProfileHeader() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
-    setIsModalVisible(false);
+    Alert.alert("Log out", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          await logout();
+          setIsModalVisible(false);
+          console.log("User", user?.username + " logged out");
+        }
+      }
+    ], { cancelable: false }
+  );
   };
 
   // ! Remember to replaca with images from the user. Uposite of the gallery view.
