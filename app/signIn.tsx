@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, {  useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
   Image,
   Text,
-  TextInput,
   TouchableOpacity,
   Pressable,
   Alert,
@@ -17,7 +16,6 @@ import {
 import { Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import LoadingComponent from "@/components/LoadingComponent";
-import KeyboardComponent from "@/components/KeyboardComponent";
 import { useAuth } from "@/providers/authContext";
 import { auth } from "@/firebaseConfig";
 import InputComponent from "@/components/InputComponent";

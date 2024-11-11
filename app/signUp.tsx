@@ -1,10 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
   Image,
   Text,
-  TextInput,
   TouchableOpacity,
   Pressable,
   Alert,
@@ -14,10 +13,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Octicons, Ionicons, Feather, MaterialIcons } from "@expo/vector-icons";
+import { Octicons, Ionicons, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
-import KeyboardComponent from "@/components/KeyboardComponent";
 import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 import InputComponent from "@/components/InputComponent";
