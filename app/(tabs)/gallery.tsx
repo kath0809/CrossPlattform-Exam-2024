@@ -31,13 +31,12 @@ export default function Gallery() {
         showsHorizontalScrollIndicator={false}
         style={styles.carousel}
       >
+        
         {item.imageURLs && item.imageURLs.length > 0
           ? item.imageURLs.map((uri, index) => (
               <Image key={index} source={{ uri }} style={styles.image} />
             ))
-          : item.imageURL && (
-              <Image source={{ uri: item.imageURL }} style={styles.image} />
-            )}
+          : null}
       </ScrollView>
 
       <Text style={styles.title}>{item.title}</Text>
