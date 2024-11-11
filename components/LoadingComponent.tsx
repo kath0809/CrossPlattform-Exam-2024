@@ -6,7 +6,9 @@ export default function LoadingComponent({ size }: { size: number }) {
   return (
     <View style={{ height: size, aspectRatio: 2 }}>
       {Platform.OS === "web" ? (
-        <ActivityIndicator size="large" color="teal" />
+        // Since LottieView is not supported on web, I'm using Rect-Native "ActivityIndicator"
+        // for web, and LottieView for mobile devices
+        <ActivityIndicator size="large" color="orange" />
       ) : (
       <LottieView
         style={{ flex: 1 }}
