@@ -9,8 +9,21 @@ export interface PostData {
   postCoordinates: LocationObjectCoords | null;
   category: string;
   author: string;
+  authorId: string;
   likes: string[];
   isLiked: boolean;
   comments: string[];
   createdAt: Date;
+}
+
+
+export interface CommentObject {
+  id: string;
+  comment: CommentData;
+}
+
+export interface CommentData {
+  authorId: string;
+  authorName: string;
+  comment: string;
 }

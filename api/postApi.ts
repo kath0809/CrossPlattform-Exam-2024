@@ -6,6 +6,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { db, getDownloadUrl } from "@/firebaseConfig";
 import { uploadImagesToFirebase } from "@/api/imageApi";
@@ -82,4 +84,21 @@ export const deletePost = async (id: string) => {
   } catch (e) {
     console.error("Error removing document: ", e);
   }
+};
+
+export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
+  console.log("Fetching posts for user ID:", authorId);
+  const postRef = collection(db, "posts");
+  const q = query(postRef, where("authorId", "==", authorId)); // Use the correct field name
+  const querySnapshot = await getDocs(q);
+  const posts: PostData[] = [];
+  querySnapshot.forEach((doc) => {
+    console.log("doc", doc.data());
+    posts.push({
+      id: doc.id,
+      ...doc.data(),
+    } as PostData);
+  });
+  console.log("Fetched user posts:", posts);
+  return posts;
 };

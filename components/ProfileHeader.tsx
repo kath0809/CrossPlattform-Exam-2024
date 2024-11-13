@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,17 +7,21 @@ import {
   Modal,
   StyleSheet,
   Alert,
+  ScrollView,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { blurhash } from "@/utils/common";
 import { useAuth } from "@/providers/authContext";
 import { AntDesign, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as postApi from "@/api/postApi";
+import { PostData } from "@/utils/postData";
 
 const ios = Platform.OS === "ios"; // This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
 
@@ -25,67 +29,49 @@ export default function ProfileHeader() {
   const { top } = useSafeAreaInsets(); // This is the top padding for iSO devices.
   const { user, logout } = useAuth(); // This is the user object from the AuthContext.
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [userPosts, setUserPosts] = useState<PostData[]>([]);
 
+  // Give user feedback with options in case logout was not intended.
   const handleLogout = async () => {
-    Alert.alert("Log out", "Are you sure you want to log out?", [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: async () => {
-          await logout();
-          setIsModalVisible(false);
-          console.log("User", user?.username + " logged out");
-        }
-      }
-    ], { cancelable: false }
-  );
+    Alert.alert(
+      "Log out",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            await logout();
+            setIsModalVisible(false);
+            console.log("User", user?.username + " logged out");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
-  // ! Remember to replaca with images from the user. Uposite of the gallery view.
-  const imageGrid = [
-    {
-      id: 1,
-      uri: "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
-    {
-      id: 2,
-      uri: "https://sarahtaylorart.com/cdn/shop/products/Dorian-the-Bear-NEW_d01a9c53-84d1-4946-828e-d21de77890d2.jpg?v=1680272010&width=1946",
-    },
-    {
-      id: 3,
-      uri: "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
-    {
-      id: 4,
-      uri: "https://sarahtaylorart.com/cdn/shop/products/Dorian-the-Bear-NEW_d01a9c53-84d1-4946-828e-d21de77890d2.jpg?v=1680272010&width=1946",
-    },
-    {
-      id: 5,
-      uri: "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
-    {
-      id: 6,
-      uri: "https://sarahtaylorart.com/cdn/shop/products/Dorian-the-Bear-NEW_d01a9c53-84d1-4946-828e-d21de77890d2.jpg?v=1680272010&width=1946",
-    },
-    {
-      id: 7,
-      uri: "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
-    {
-      id: 8,
-      uri: "https://sarahtaylorart.com/cdn/shop/products/Dorian-the-Bear-NEW_d01a9c53-84d1-4946-828e-d21de77890d2.jpg?v=1680272010&width=1946",
-    },
-    {
-      id: 9,
-      uri: "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
-  ];
+  // FEtch the user's posts from postApi
+  useEffect(() => {
+    const fetchUserPosts = async () => {
+      if (user && user.uid) {
+        try {
+          const posts = await postApi.getUserPosts(user.uid);
+          setUserPosts(posts);
+        } catch (error) {
+          console.log("Error fetching user posts", error);
+        }
+      }
+    };
+    fetchUserPosts();
+  }, [user]);
 
   return (
+    // Shows the users username and profile image if authenticated, nothing and blurhash if not signed in anonymously.
     // Increase padding by +10 for Android screens.
     <View
       style={{ paddingTop: ios ? top : top + 10 }}
@@ -104,7 +90,7 @@ export default function ProfileHeader() {
         Hi, {user?.username}
       </Text>
 
-      {/* Profile Modal */}
+      {/* When clicking the image, open this modal */}
       <Modal
         animationType="slide"
         transparent={false}
@@ -114,9 +100,9 @@ export default function ProfileHeader() {
         }}
       >
         <View style={[styles.modalContainer, { backgroundColor: "#000000e5" }]}>
-          <View style={styles.modalHeader}>
+          <View className="flex-row justify-between w-full px-4 py-3">
             <TouchableOpacity
-              style={styles.button}
+              className="p-2"
               onPress={() => {
                 setIsModalVisible(false);
                 router.push("/newPost");
@@ -125,23 +111,32 @@ export default function ProfileHeader() {
               <Octicons name="diff-added" size={24} color="#f5a442" />
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.button}
+              className="p-2"
               onPress={() => {
                 setIsModalVisible(false);
               }}
             >
               <AntDesign name="close" size={24} color="#f5a442" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout} style={styles.button}>
+            <TouchableOpacity onPress={handleLogout} className="p-2">
               <Octicons name="sign-out" size={24} color="#f5a442" />
             </TouchableOpacity>
           </View>
-
           <View style={styles.modalContent}>
             {user?.username ? (
-              <Text style={styles.modalTitle}>{user.username}</Text>
+              <Text
+                className="font-bold color-custom-orange mb-2"
+                style={{ fontSize: 24 }}
+              >
+                {user.username}
+              </Text>
             ) : (
-              <Text style={styles.modalTitle}>Guest user</Text>
+              <Text
+                className="font-bold color-custom-blue mb-2"
+                style={{ fontSize: 24 }}
+              >
+                Guest user
+              </Text>
             )}
             <View>
               <Image
@@ -157,15 +152,21 @@ export default function ProfileHeader() {
                 transition={500}
               />
             </View>
-            <View style={styles.gridContainer}>
-              {imageGrid.map((image) => (
-                <Image
-                  key={image.id}
-                  source={{ uri: image.uri }}
-                  style={styles.gridItem}
-                />
-              ))}
-            </View>
+            <ScrollView>
+              <View className="flex flex-row flex-wrap justify-center pt-10">
+                {userPosts.map((post) => (
+                  <View key={post.id}>
+                    {post.imageURLs.map((imageURL, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: imageURL }}
+                        style={styles.image}
+                      />
+                    ))}
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
           </View>
         </View>
       </Modal>
@@ -174,6 +175,12 @@ export default function ProfileHeader() {
 }
 
 const styles = StyleSheet.create({
+  image: {
+    width: 100,
+    height: 100,
+    margin: 5,
+    borderRadius: 15,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "flex-start",
@@ -181,51 +188,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingTop: Platform.OS === "ios" ? 50 : 20,
   },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
   modalContent: {
     width: "100%",
     padding: 20,
     alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#f5a442",
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: "#f5a442",
-    padding: 10,
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: "black",
-    fontSize: 16,
-  },
-  button: {
-    padding: 10,
-  },
-  gridContainer: {
-    marginTop: 70,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-  gridItem: {
-    width: 100,
-    height: 100,
-    margin: 5,
-    borderRadius: 15,
   },
 });
