@@ -15,6 +15,7 @@ interface User {
   email: string | null;
   username?: string;
   profileImage?: string;
+  isAnonymous?: boolean
   
 }
 
