@@ -166,6 +166,7 @@ export default function PostForm({ closeModal }: PostFormProps) {
                         category: categoryText,
                         id: `postName-${titleText}`,
                         author: user?.username || "Aononymous",
+                        authorId: user?.uid || "Anonymous",
                         isLiked: false,
                         imageURLs: uploadedImagePaths || [],
                         comments: [],
