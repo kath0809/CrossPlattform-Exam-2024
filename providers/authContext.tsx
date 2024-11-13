@@ -5,7 +5,7 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, signInAnonymously as firebaseSignInAnonymously } from "firebase/auth";
 import { loginUser, registerUser } from "@/api/authApi";
 import { db } from "@/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
@@ -15,6 +15,7 @@ interface User {
   email: string | null;
   username?: string;
   profileImage?: string;
+  
 }
 
 const auth = getAuth();
@@ -33,6 +34,7 @@ interface AuthContextType {
     username: string,
     profileImage: string
   ) => Promise<{ success: boolean; msg?: string; data?: User }>;
+  anonymousSignIn: () => Promise<void>;
 }
 
 export const useAuth = () => {
@@ -96,10 +98,25 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
     return result;
   };
-
+  
+    const anonymousSignIn = async () => {
+      try {
+        await firebaseSignInAnonymously(auth);
+      } catch (error) {
+        console.error("Error signing in anonymously:", error);
+      }
+    };
+  
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated, login, logout, register }}
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        register,
+        anonymousSignIn,
+      }}
     >
       {children}
     </AuthContext.Provider>

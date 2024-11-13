@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   View,
@@ -19,13 +19,16 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 import { auth } from "@/firebaseConfig";
 import InputComponent from "@/components/InputComponent";
+import { signInAnonymously } from "firebase/auth";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
   const { login } = useAuth();
+  const { anonymousSignIn } = useAuth();
   const router = useRouter();
-const [email, setEmail] = useState<string>("");
-const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
 
   const handleLogin = async () => {
     // First, check that email and/or password is not empty
@@ -48,6 +51,10 @@ const [password, setPassword] = useState<string>("");
       );
     }
   };
+
+  const handleAnonymousSignIn = async () => {
+    await anonymousSignIn();
+  }
 
   return (
     <View className="flex-1 bg-[#000000e5]">
@@ -108,20 +115,20 @@ const [password, setPassword] = useState<string>("");
             />
           </View>
           <View>
-              <TouchableOpacity
-                onPress={handleLogin}
-                style={{ height: hp(6.5) }}
-                className="bg-custom-orange rounded-xl justify-center items-center"
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={{ height: hp(6.5) }}
+              className="bg-custom-orange rounded-xl justify-center items-center"
+            >
+              <Text
+                style={{ fontSize: hp(2.7) }}
+                className="text-neutral-800 font-bold tracking-widest"
+                accessibilityLabel="Sign in button"
+                accessibilityHint="Sign in"
               >
-                <Text
-                  style={{ fontSize: hp(2.7) }}
-                  className="text-neutral-800 font-bold tracking-widest"
-                  accessibilityLabel="Sign in button"
-                  accessibilityHint="Sign in"
-                >
-                  Sign In
-                </Text>
-              </TouchableOpacity>
+                Sign In
+              </Text>
+            </TouchableOpacity>
           </View>
 
           <View className="flex-row justify-center">
@@ -143,6 +150,15 @@ const [password, setPassword] = useState<string>("");
               </Text>
             </Pressable>
           </View>
+          <View className="flex-row justify-center"></View>
+          <Pressable onPress={handleAnonymousSignIn}>
+            <Text
+              style={{ fontSize: hp(2) }}
+              className="font-medium text-neutral-200"
+            >
+              Don't want to sign in?{" "}
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </View>
