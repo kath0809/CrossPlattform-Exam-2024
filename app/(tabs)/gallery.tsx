@@ -1,10 +1,39 @@
 import { PostData } from "@/utils/postData";
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, FlatList, StyleSheet, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import * as postApi from "@/api/postApi";
+import { auth } from "@/firebaseConfig";
+import { User } from "@firebase/auth";
+import { router } from "expo-router";
+
 
 export default function Gallery() {
   const [posts, setPosts] = useState<PostData[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      setUser(authUser);
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleImageDetails = (post: PostData) => {
+    if (user && !user.isAnonymous) {
+      console.log(`User ${user.displayName} clicked on image ${post.title}`);
+      router.push({
+        pathname: "/postDetails",
+        params: {
+          postId: post.id
+        },
+      });
+    } else {
+      console.log("User is not signed in or is an anonymous user");
+      Alert.alert("You need to be signed in to view image details");
+    }
+  };
 
   const getPostsFromBackend = async () => {
     const posts = await postApi.getAllPosts();
@@ -21,23 +50,25 @@ export default function Gallery() {
   }, []);
 
   const renderItem = ({ item }: { item: PostData }) => (
-    <View style={styles.postContainer}>
-      <Text className="pb-1" style={styles.author}>
-        by {item.author}
-      </Text>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        style={styles.carousel}
-      >
-        {item.imageURLs.map((image) => (
-          <Image key={image} source={{ uri: image }} style={styles.image} />
-        ))}
-      </ScrollView>
+      <View style={styles.postContainer}>
+        <Text className="pb-1" style={styles.author}>
+          by {item.author}
+        </Text>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          style={styles.carousel}
+        >
+          {item.imageURLs.map((image) => (
+            <TouchableOpacity key={image} onPress={() => handleImageDetails(item)}>
+            <Image key={image} source={{ uri: image }} style={styles.image} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
-      <Text style={styles.title}>{item.title}</Text>
-    </View>
+        <Text style={styles.title}>{item.title}</Text>
+      </View>
   );
 
   return (
