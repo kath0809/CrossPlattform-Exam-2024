@@ -113,6 +113,23 @@ export default function PostDetail() {
     }
   }
 
+  const handleDeleteComment = async (commentId: string) => {
+    Alert.alert("Delete comment", "Are you sure you want to delete this comment?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Delete",
+        onPress: async () => {
+          await commentApi.deleteComment(commentId, post?.id ?? "");
+          setPostComments(postComments.filter((c) => c.id !== commentId));
+        },
+      },
+    ],
+    { cancelable: false }
+  );
+  }
 
   return (
     <View className="flex-1">
@@ -210,63 +227,53 @@ export default function PostDetail() {
             <Text className="text-base text-gray-700 mb-2">
               {post?.description}
             </Text>
-            <View className="mt-1">
-              <Text className="text-lg font-bold mb-2">Comments</Text>
-              {loading ? (
-                <LoadingComponent size={30} />
-              ) : (
-                postComments.map((comment) => (
-                  <View
-                    key={comment.id}
-                    className="flex-row justify-between items-center mb-2"
-                  >
-                    <View className="flex-row gap-1">
-                      <Text className="text-gray-700 font-semibold">
-                        {comment.comment.authorName}:
-                      </Text>
-                      <Text className="text-gray-600">
-                        {comment.comment.comment}
-                      </Text>
-                    </View>
-                    {comment.comment.authorId === user?.uid && (
-                      <Pressable
-                        onPress={async () => {
-                          await commentApi.deleteComment(comment.id, post?.id ?? "");
-                          setPostComments( postComments.filter((c) => c.id !== comment.id)
-                          );
-                        }}
-                      >
-                        <Text className="text-red-500">Delete</Text>
-                      </Pressable>
-                    )}
-                  </View>
-                ))
-              )}
-
-              <View className="flex-row items-center mt-2">
-                <TextInput
-                  value={commentText}
-                  onChangeText={setCommentText}
-                  placeholder="Add a comment..."
-                  className="flex-1 border border-gray-300 rounded-md px-2 py-1"
-                />
-                <Pressable
-                onPress={handleNewComment}
-                 className="ml-2 bg-custom-orange rounded-md px-4 py-2">
-                  {loadingAddComment ? (
-                    <LoadingComponent size={wp(25)} />
-                  ) : (
-                    <Text className="text-black font-bold">Post</Text>
-                  )}
-                </Pressable>
-              </View>
-            </View>
-            {/* Map View */}
-            {post && (
+            <Text className="text-lg font-bold mb-2">Comments</Text>
+            <View className="flex-row items-center mt-3 p-2 rounded-md bg-gray-50 shadow-inner">
+              <TextInput
+                value={commentText}
+                onChangeText={setCommentText}
+                placeholder="Add a comment..."
+                className="flex-1 bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-sm"
+              />
               <Pressable
-                onPress={() => router.push("/(tabs)/map")}
-                className="mt-8 rounded-lg overflow-hidden"
+                onPress={handleNewComment}
+                className="ml-2 bg-custom-orange rounded-md px-4 py-2"
               >
+                {loadingAddComment ? (
+                  <LoadingComponent size={30} />
+                ) : (
+                  <Text className="text-black font-bold">Post</Text>
+                )}
+              </Pressable>
+            </View>
+            {loading ? (
+              <LoadingComponent size={30} />
+            ) : (
+              postComments.map((comment) => (
+                <View
+                  key={comment.id}
+                  className="flex-row justify-between items-center mb-2 p-3 rounded-lg bg-gray-100 shadow-sm"
+                >
+                  <View className="flex-row flex-wrap">
+                    <Text className="text-gray-700 font-semibold mr-1">
+                      {comment.comment.authorName}:
+                    </Text>
+                    <Text className="text-gray-600">
+                      {comment.comment.comment}
+                    </Text>
+                  </View>
+                  {comment.comment.authorId === user?.uid && (
+                    <Pressable
+                      onPress={() => handleDeleteComment(comment.id)}
+                      className="ml-2"
+                    >
+                      <Ionicons name="trash-outline" color={"red"} size={20} />
+                    </Pressable>
+                  )}
+                </View>
+              ))
+            )}
+            {post && (
                 <MapView
                   initialRegion={{
                     latitude: post?.postCoordinates?.latitude ?? 0,
@@ -282,9 +289,9 @@ export default function PostDetail() {
                       longitude: post?.postCoordinates?.longitude ?? 0,
                     }}
                     title={post?.title}
+                    onPress={() => router.push("/(tabs)/map")}
                   />
                 </MapView>
-              </Pressable>
             )}
           </View>
         </View>
