@@ -19,7 +19,6 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 import { auth } from "@/firebaseConfig";
 import InputComponent from "@/components/InputComponent";
-import { signInAnonymously } from "firebase/auth";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
