@@ -13,27 +13,6 @@ import {
 import { db, getDownloadUrl } from "@/firebaseConfig";
 import { uploadImagesToFirebase } from "@/api/imageApi";
 
-// export const createPost = async (post: PostData) => {
-//   try {
-//     const firebaseImage = await uploadImageToFirebase(post.imageURL);
-//     console.log("firebaseImage", firebaseImage);
-//     if (firebaseImage === "ERROR") {
-//       return;
-//     }
-//     const postImageDownloadUrl = await getDownloadUrl(firebaseImage); //
-//     const postWithImageData: PostData = {
-//       ...post,
-//       imageURL: postImageDownloadUrl,
-//       createdAt: new Date(),
-//     };
-//     const docRef = await addDoc(collection(db, "posts"), postWithImageData);
-//     console.log("Document written with ID:", docRef.id);
-//   } catch (e) {
-//     console.log("Error adding document", e);
-//   }
-// };
-
-/* The Code Above Works for single upload, lets try for multiple */
 export const createPost = async (post: PostData) => {
   try {
     const firebaseImages = await uploadImagesToFirebase(post.imageURLs);
@@ -88,13 +67,11 @@ export const deletePost = async (id: string) => {
 };
 
 export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
-  console.log("Fetching posts for user ID:", authorId);
   const postRef = collection(db, "posts");
-  const q = query(postRef, where("authorId", "==", authorId)); // Use the correct field name
+  const q = query(postRef, where("authorId", "==", authorId));
   const querySnapshot = await getDocs(q);
   const posts: PostData[] = [];
   querySnapshot.forEach((doc) => {
-    console.log("doc", doc.data());
     posts.push({
       id: doc.id,
       ...doc.data(),
@@ -104,24 +81,19 @@ export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
   return posts;
 };
 
-export const toggleLikePost = async (id: string, userId: string) => {
+export const toggleLike = async (id: string, userId: string) => {
   const postRef = doc(db, "posts", id);
   const post = await getDoc(postRef);
-  // Beklager litt stygg kode her med ? og !
-  if (post.data()?.likes) {
-    const likes = post.data()!.likes;
-    if (likes.includes(userId)) {
-      await updateDoc(postRef, {
-        likes: likes.filter((like: string) => like !== userId),
-      });
-    } else {
-      await updateDoc(postRef, {
-        likes: [...likes, userId],
-      });
-    }
-  } else {
-    await updateDoc(postRef, {
-      likes: [userId],
-    });
+  const postData = post.data();
+
+  if (!postData) {
+    throw new Error("Post not found");
   }
+
+  const likes = postData.likes || [];
+  const updatedLikes = likes.includes(userId)
+    ? likes.filter((like: string) => like !== userId)
+    : [...likes, userId];
+
+  await updateDoc(postRef, { likes: updatedLikes });
 };

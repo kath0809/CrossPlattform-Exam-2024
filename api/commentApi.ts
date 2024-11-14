@@ -29,7 +29,7 @@ export const deleteComment = async (commentId: string, postId: string) => {
   }
 };
 
-export const getComment = async (ids: string[]) => {
+export const getCommentsByIds = async (ids: string[]) => {
   try {
     const response = await Promise.all(
       ids.map(async (id) => {
