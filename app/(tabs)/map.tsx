@@ -1,96 +1,152 @@
-import React, { useRef, useState } from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import { MaterialIcons } from "@expo/vector-icons";
-import MapComponent from "@/components/MapComponent";
+import { PostData } from "@/utils/postData";
+import * as posApi from "@/api/postApi";
 
-const Map = () => {
+export default function Map() {
   const mapRef = useRef<MapView>(null);
-  const [location, setLocation] = useState<{
+  const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [isCentered, setIsCentered] = useState(false);
-  const [showLocation, setShowLocation] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(0.1);
+  const [isZoomedIn, setIsZoomedIn] = useState(false);
+  const [posts, setPosts] = useState<PostData[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const allPosts = await posApi.getAllPosts();
+      setPosts(allPosts);
+    };
+    fetchPosts();
+  }, []);
 
   const toggleLocation = async () => {
-    if (showLocation) {
-      // Hide the location and zoom out to a broader view
-      mapRef.current?.animateToRegion({
-        latitude: location?.latitude || 0,
-        longitude: location?.longitude || 0,
-        latitudeDelta: 0.1,
-        longitudeDelta: 0.1,
-      });
-      setLocation(null);
-      setShowLocation(false);
-      setIsCentered(false);
+    if (isZoomedIn) {
+      // Zoom out to a broader view when hiding location
+      mapRef.current?.animateToRegion(
+        {
+          latitude: userLocation?.latitude || 0,
+          longitude: userLocation?.longitude || 0,
+          latitudeDelta: 0.1,
+          longitudeDelta: 0.1,
+        },
+        1000
+      );
+      setIsZoomedIn(false);
     } else {
       // Request permission to access location
-      let { status } = await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
         return;
       }
 
-      // Get the current location
-      let location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
+      const { coords } = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = coords;
 
-      // Center the map on the current location
-      mapRef.current?.animateToRegion({
-        latitude,
-        longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-
-      // Update the state with the current location
-      setLocation({ latitude, longitude });
-      setShowLocation(true);
-      setIsCentered(true);
+      mapRef.current?.animateToRegion(
+        {
+          latitude,
+          longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },
+        1000
+      );
+      setUserLocation({ latitude, longitude });
+      setIsZoomedIn(true);
     }
+  };
+
+  const zoomIn = () => {
+    const newZoomLevel = Math.max(zoomLevel / 2, 0.005);
+    setZoomLevel(newZoomLevel);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: userLocation?.latitude || 23.142545,
+        longitude: userLocation?.longitude || -82.357438,
+        latitudeDelta: newZoomLevel,
+        longitudeDelta: newZoomLevel,
+      },
+      500
+    );
+  };
+
+  const zoomOut = () => {
+    const newZoomLevel = Math.min(zoomLevel * 2, 50);
+    setZoomLevel(newZoomLevel);
+    mapRef.current?.animateToRegion(
+      {
+        latitude: userLocation?.latitude || 23.142545,
+        longitude: userLocation?.longitude || -82.357438,
+        latitudeDelta: newZoomLevel,
+        longitudeDelta: newZoomLevel,
+      },
+      500
+    );
   };
 
   return (
     <View style={styles.container}>
-      <MapComponent
-        initialRegion={
-          location
-            ? {
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }
-            : undefined
-        }
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={{
+          latitude: 23.142545,
+          longitude: -82.357438,
+          latitudeDelta: zoomLevel,
+          longitudeDelta: zoomLevel,
+        }}
       >
-        {location && <Marker coordinate={location} title="My Location" />}
-      </MapComponent>
+        {userLocation && (
+          <Marker coordinate={userLocation} title="My Location" />
+        )}
+
+        {posts.map((post) =>
+          post.postCoordinates ? (
+            <Marker
+              key={post.id}
+              coordinate={{
+                latitude: post.postCoordinates.latitude,
+                longitude: post.postCoordinates.longitude,
+              }}
+              title={post.title}
+            />
+          ) : null
+        )}
+      </MapView>
       <View style={styles.buttonContainer}>
+        <Pressable onPress={zoomIn} style={styles.zoomButton}>
+          <Text style={styles.buttonText}>+</Text>
+        </Pressable>
+        <Pressable onPress={zoomOut} style={styles.zoomButton}>
+          <Text style={styles.buttonText}>-</Text>
+        </Pressable>
         <Pressable onPress={toggleLocation} style={styles.locationButton}>
           <MaterialIcons name="my-location" size={24} color="black" />
           <Text style={styles.buttonText}>
-            {showLocation ? "Hide My Location" : "Show My Location"}
+            {isZoomedIn ? "Zoom Out" : "Zoom In to My Location"}
           </Text>
         </Pressable>
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   map: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 20,
+    bottom: 30,
     left: 20,
     right: 20,
     alignItems: "center",
@@ -100,13 +156,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     padding: 10,
-    borderRadius: 5,
-    elevation: 2,
+    borderRadius: 8,
+    elevation: 4,
   },
   buttonText: {
-    marginLeft: 10,
+    marginLeft: 8,
     fontSize: 16,
+    color: "black",
+  },
+  zoomButton: {
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 5,
+    marginVertical: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-
-export default Map;

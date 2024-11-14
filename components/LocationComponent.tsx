@@ -35,16 +35,14 @@ export default function useLocation(): UseLocationHookReturn {
     try {
       // Get the current location
       let currentLocation = await Location.getCurrentPositionAsync();
-      setCoordinates(currentLocation.coords); // Set the coordinates to be used in the post
-
-      // Get the human-readable address based on coordinates
+      setCoordinates(currentLocation.coords); 
       const address = await Location.reverseGeocodeAsync({
         latitude: currentLocation.coords.latitude,
         longitude: currentLocation.coords.longitude,
       });
 
       if (address.length > 0) {
-        setLocationAddress(address[0]); // Set the geocoded address
+        setLocationAddress(address[0]);
       }
     } catch (error) {
       setStatusText("Error getting location. Please try again.");
