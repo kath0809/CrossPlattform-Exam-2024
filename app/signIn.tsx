@@ -31,13 +31,10 @@ export default function SignIn() {
 
 
   const handleLogin = async () => {
-    // First, check that email and/or password is not empty
     if (!email || !password) {
-      // Using react-native Alert to handle user feedbacks
       Alert.alert("Could not sign in", "Email and password are required");
       return;
     }
-    // Then, if both fields are filled, call the login function
     setLoading(true);
     const response = await login(email, password);
     setLoading(false);

@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   image: {
-    width: 300, // Width of each image in the carousel
+    width: 300,
     height: 200,
     borderRadius: 10,
     marginRight: 10,
