@@ -46,9 +46,7 @@ export default function ImageComponentProps({
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsMultipleSelection: true,
-      selectionLimit: 3,
-      //allowsEditing: true,
-      //aspect: [4, 3],
+      selectionLimit: 3, // Ive set the limit of images to 3.
       quality: 1,
     });
 
