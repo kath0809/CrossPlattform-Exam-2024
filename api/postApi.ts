@@ -7,6 +7,7 @@ import {
   getDoc,
   getDocs,
   query,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { db, getDownloadUrl } from "@/firebaseConfig";
@@ -101,4 +102,26 @@ export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
   });
   console.log("Fetched user posts:", posts);
   return posts;
+};
+
+export const toggleLikePost = async (id: string, userId: string) => {
+  const postRef = doc(db, "posts", id);
+  const post = await getDoc(postRef);
+  // Beklager litt stygg kode her med ? og !
+  if (post.data()?.likes) {
+    const likes = post.data()!.likes;
+    if (likes.includes(userId)) {
+      await updateDoc(postRef, {
+        likes: likes.filter((like: string) => like !== userId),
+      });
+    } else {
+      await updateDoc(postRef, {
+        likes: [...likes, userId],
+      });
+    }
+  } else {
+    await updateDoc(postRef, {
+      likes: [userId],
+    });
+  }
 };
