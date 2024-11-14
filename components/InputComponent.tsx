@@ -13,6 +13,7 @@ type FormInputProps = {
   accessibilityHint?: string;
 };
 
+// Made a custom input component to improve code readability and reusability.
 export default function InputComponent({
   value,
   placeholder,

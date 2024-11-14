@@ -12,14 +12,12 @@ config.resolver.sourceExts.push("cjs"); // Denne forteller metro at vi kan impor
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (platform === "web") {
-    // The alias will only be used when bundling for the web.
     return context.resolveRequest(
       context,
       ALIASES[moduleName] ?? moduleName,
       platform
     );
   }
-  // Ensure you call the default resolver.
   return context.resolveRequest(context, moduleName, platform);
 };
 

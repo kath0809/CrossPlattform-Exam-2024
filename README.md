@@ -1,3 +1,8 @@
+# TODO
+[] Delete posts
+[] LocationComponent
+
+
 ## Installed Dependencies
 expo vektor icons(icons used in project)
 https://www.npmjs.com/package/@expo/vector-icons
@@ -25,7 +30,9 @@ https://docs.expo.dev/versions/latest/sdk/image/
 Expo map (map)
 https://docs.expo.dev/versions/latest/sdk/map-view/
 + https://docs.expo.dev/versions/latest/sdk/location/
-+ npm add @teovilla/react-native-web-maps for web.
+to show map on web:
++ https://www.npmjs.com/package/@teovilla/react-native-web-maps 
++ npm add @teovilla/react-native-web-maps
 
 ---
 

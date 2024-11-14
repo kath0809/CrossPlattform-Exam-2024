@@ -3,7 +3,9 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
-// TODO This code is copied from the lecture code.
+// This code is mainly copied from the lecture code, as it is similar to the code in the documentation,
+// I saw no reason to change it, apart from the color in the styling of the camera
+// and the options to select multiple images.
 type ImageComponentPropsProps = {
   closeModal: () => void;
   setImages: (uris: string[]) => void;
