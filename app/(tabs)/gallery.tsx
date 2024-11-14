@@ -1,17 +1,30 @@
 import { PostData } from "@/utils/postData";
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, StyleSheet, ScrollView, Alert, TouchableOpacity, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+  TextInput,
+  Pressable,
+  RefreshControl,
+} from "react-native";
 import * as postApi from "@/api/postApi";
 import { auth } from "@/firebaseConfig";
 import { User } from "@firebase/auth";
-import { router } from "expo-router";
-
+import { router, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Gallery() {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<PostData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -24,11 +37,10 @@ export default function Gallery() {
 
   const handleImageDetails = (post: PostData) => {
     if (user && !user.isAnonymous) {
-      console.log(`User ${user.displayName} clicked on image ${post.title}`);
       router.push({
         pathname: "/postDetails",
         params: {
-          postId: post.id
+          postId: post.id,
         },
       });
     } else {
@@ -42,7 +54,7 @@ export default function Gallery() {
     // Sorter på tittel
     const sortedPosts = posts.sort((a, b) => a.title.localeCompare(b.title));
     setPosts(sortedPosts);
-    setFilteredPosts(sortedPosts)
+    setFilteredPosts(sortedPosts);
     /* Sorter på dato/tid */
     //const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     //setPosts(sortedPosts);
@@ -53,99 +65,88 @@ export default function Gallery() {
   }, []);
 
   useEffect(() => {
-    if (searchQuery) {
-      const filtered = posts.filter((post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredPosts(filtered);
-    } else {
-      setFilteredPosts(posts);
-    }
+    const filtered = posts.filter((post) =>
+      post.category.toLowerCase().includes(searchQuery.toLowerCase()) 
+
+      //post.author.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredPosts(filtered);
   }, [searchQuery, posts]);
+
+  const handleRefresh = async () => {
+    setRefresh(true);
+    await getPostsFromBackend();
+    setRefresh(false);
+  };
 
   const renderItem = ({ item }: { item: PostData }) => (
     <View className="flex-1 p-1">
-    <View style={styles.postContainer}>
-      <Text style={styles.title}>{item.title}</Text>
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        style={styles.carousel}
-      >
-        {item.imageURLs.map((image) => (
-          <TouchableOpacity
-            key={image}
-            onPress={() => handleImageDetails(item)}
-          >
-            <Image key={image} source={{ uri: image }} style={styles.image} />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-      <Text className="pb-1" style={styles.author}>
-        by {item.author}
-      </Text>
-    </View></View>
+      <View className="bg-slate-100 rounded-lg p-4 mb-4 border border-gray-200">
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-lg font-bold">{item.title}</Text>
+        </View>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          className="h-50"
+        >
+          {item.imageURLs.map((image) => (
+            <TouchableOpacity
+              key={image}
+              onPress={() => handleImageDetails(item)}
+            >
+              <Image key={image} source={{ uri: image }} style={styles.image} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <View className="flex-row justify-between items-center mt-2">
+          <Text className="text-sm text-gray-500">by {item.author}</Text>
+          <Text className="text-sm text-gray-500 font-bold">
+            {item.category}
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search posts..."
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-    <ScrollView>
-      {posts.map((post) => (
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refresh} onRefresh={handleRefresh} />
+      }
+    >
+      <View className="p-4">
+        <View className="flex-row items-center">
+          <TextInput
+            placeholder="Search category..."
+            placeholderTextColor={"gray"}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            className="flex-1 p-2 border rounded-xl pr-10"
+            accessibilityLabel="Search"
+            accessibilityHint="Search for a category"
+          />
+          <Pressable className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2">
+            <Ionicons name="search" size={24} color={"#f5a442"} />
+          </Pressable>
+        </View>
+      </View>
+      {filteredPosts.map((post) => (
         <View key={post.id}>{renderItem({ item: post })}</View>
       ))}
     </ScrollView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-  },
-  postContainer: {
-    marginBottom: 16,
-    padding: 16,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 8,
-  },
   image: {
     width: 300,
     height: 200,
     borderRadius: 10,
     marginRight: 10,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 8,
-    paddingBottom: 2,
-  },
-  author: {
-    fontSize: 14,
-    color: "#888",
-    marginTop: 4,
-  },
-  description: {
-    fontSize: 14,
-    marginTop: 8,
-  },
   carousel: {
     height: 200,
-  },
-  searchBar: {
-    height: 40,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    marginBottom: 16,
   },
 });
