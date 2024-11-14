@@ -147,15 +147,26 @@ export default function SignIn() {
               </Text>
             </Pressable>
           </View>
-          <View className="flex-row justify-center"></View>
-          <Pressable onPress={handleAnonymousSignIn}>
+          <View className="flex-row justify-center">
+          
             <Text
               style={{ fontSize: hp(2) }}
               className="font-medium text-neutral-200"
             >
               Don't want to sign in?{" "}
             </Text>
+            <Pressable onPress={handleAnonymousSignIn}>
+            <Text
+              style={{ fontSize: hp(2) }}
+              className="font-bold text-custom-orange"
+              accessibilityLabel="Sign in anonymously"
+              accessibilityHint="Press to sign in anonymously"
+              accessibilityRole="button"
+            >
+              Sign in anonymously
+            </Text>
           </Pressable>
+          </View>
         </View>
       </ScrollView>
     </View>
