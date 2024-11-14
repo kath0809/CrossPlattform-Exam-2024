@@ -15,7 +15,7 @@ import {
 import * as postApi from "@/api/postApi";
 import { auth } from "@/firebaseConfig";
 import { User } from "@firebase/auth";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Gallery() {
@@ -67,7 +67,6 @@ export default function Gallery() {
   useEffect(() => {
     const filtered = posts.filter((post) =>
       post.category.toLowerCase().includes(searchQuery.toLowerCase()) 
-
       //post.author.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPosts(filtered);
@@ -91,6 +90,8 @@ export default function Gallery() {
           showsHorizontalScrollIndicator={false}
           className="h-50"
         >
+          {/* All images uploaded to firebase for the purpose of not delivering an empty app are downloaded
+          from https://www.freepik.com in the period of 01.11 - 12.11 2024 */}
           {item.imageURLs.map((image) => (
             <TouchableOpacity
               key={image}

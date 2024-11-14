@@ -135,6 +135,9 @@ export default function SignUp() {
           <LoadingComponent size={wp(25)} />
         </View>
       )}
+      {/* Image is downloaded from freepik 6.11.2024
+      https://www.freepik.com/free-photo/tattooed-man-s-hand-holding-sunflower-against-grey-backdrop_4360805.htm#fromView=serie&position=1
+      */}
       <Image
         source={require("../assets/images/registerBack.png")}
         resizeMode="cover"

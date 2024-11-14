@@ -2,6 +2,9 @@ import React from "react";
 import { ActivityIndicator, Platform, View } from "react-native";
 import LottieView from "lottie-react-native";
 
+
+// My LoadingComponent is downloaded and modified 02.11.204
+// from https://lottiefiles.com/free-animation/loading-animation-dDllMXjht9 
 export default function LoadingComponent({ size }: { size: number }) {
   return (
     <View style={{ height: size, aspectRatio: 2 }}>

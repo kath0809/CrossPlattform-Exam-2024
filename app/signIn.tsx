@@ -72,6 +72,9 @@ export default function SignIn() {
           <LoadingComponent size={wp(25)} />
         </View>
       )}
+      {/* Image is downloaded from freepik 6.11.2024
+      https://www.freepik.com/free-photo/tattooed-young-man-with-pierced-ear-nose-holding-flower-bouquet-front-his-face_4371175.htm
+      */}
       <Image
         source={require("../assets/images/signInBack.png")}
         resizeMode="cover"
@@ -147,7 +150,6 @@ export default function SignIn() {
             </Pressable>
           </View>
           <View className="flex-row justify-center">
-          
             <Text
               style={{ fontSize: hp(2) }}
               className="font-medium text-neutral-200"
@@ -155,16 +157,16 @@ export default function SignIn() {
               Don't want to sign in?{" "}
             </Text>
             <Pressable onPress={handleAnonymousSignIn}>
-            <Text
-              style={{ fontSize: hp(2) }}
-              className="font-bold text-custom-orange"
-              accessibilityLabel="Sign in anonymously"
-              accessibilityHint="Press to sign in anonymously"
-              accessibilityRole="button"
-            >
-              Sign in anonymously
-            </Text>
-          </Pressable>
+              <Text
+                style={{ fontSize: hp(2) }}
+                className="font-bold text-custom-orange"
+                accessibilityLabel="Sign in anonymously"
+                accessibilityHint="Press to sign in anonymously"
+                accessibilityRole="button"
+              >
+                Sign in anonymously
+              </Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
