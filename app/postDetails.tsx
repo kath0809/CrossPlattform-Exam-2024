@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -23,8 +23,6 @@ import { useAuth } from "@/providers/authContext";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "@/components/LoadingComponent";
-import { auth } from "@/firebaseConfig";
-
 
 const { width } = Dimensions.get("window");
 
@@ -37,7 +35,6 @@ export default function PostDetail() {
   const [loadingAddComment] = useState(false);
   const [postComments, setPostComments] = useState<CommentObject[]>([]);
   const [commentText, setCommentText] = useState("");
-
   const [isLiked, setIsLiked] = useState(false);
   const [numLikes, setNumLikes] = useState(0);
 
@@ -49,6 +46,10 @@ export default function PostDetail() {
             Array.isArray(postId) ? postId[0] : postId
           );
           setPost(fetchedPost);
+          const comments = await commentApi.getCommentsByIds(fetchedPost.comments);
+          if (comments) {
+            setPostComments(comments);
+          }
         }
       } catch (error) {
         console.error("Error fetching post:", error);
