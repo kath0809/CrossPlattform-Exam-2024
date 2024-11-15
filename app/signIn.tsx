@@ -19,6 +19,7 @@ import LoadingComponent from "@/components/LoadingComponent";
 import { useAuth } from "@/providers/authContext";
 import { auth } from "@/firebaseConfig";
 import InputComponent from "@/components/InputComponent";
+import * as authApi from "@/api/authApi";
 
 export default function SignIn() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -165,6 +166,28 @@ export default function SignIn() {
                 accessibilityRole="button"
               >
                 Sign in anonymously
+              </Text>
+            </Pressable>
+          </View>
+
+          <View className="flex-row justify-center">
+            <Text
+              style={{ fontSize: hp(2) }}
+              className="font-medium text-neutral-200"
+            >
+              Sign in with?{" "}
+            </Text>
+            <Pressable onPress={async () => {
+              await authApi.googleSignIn();
+            }}>
+              <Text
+                style={{ fontSize: hp(2) }}
+                className="font-bold text-custom-orange"
+                accessibilityLabel="Sign in anonymously"
+                accessibilityHint="Press to sign in anonymously"
+                accessibilityRole="button"
+              >
+                google
               </Text>
             </Pressable>
           </View>

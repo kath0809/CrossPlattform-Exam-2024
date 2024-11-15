@@ -34,6 +34,10 @@ to show map on web:
 + https://www.npmjs.com/package/@teovilla/react-native-web-maps 
 + npm add @teovilla/react-native-web-maps
 
+
+expo google signin
+ios bundle identifier
+com.artvista32.kryssplattform
 ---
 
 ## Images

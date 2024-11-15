@@ -11,6 +11,10 @@ npm-debug.*
 web-build/
 firebaseEnv.js
 googleApiKeyEnv.js
+googleSignInEnv.js
+GoogleService-Info.plist
+
+
 
 # macOS
 .DS_Store

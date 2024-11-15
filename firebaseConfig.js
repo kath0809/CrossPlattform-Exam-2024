@@ -5,6 +5,8 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import firebaseConfig from "./firebaseEnv";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { googleWebClient } from "./googleSignInEnv";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -16,7 +18,10 @@ export const auth =
         persistence: getReactNativePersistence(ReactNativeAsyncStorage),
       });
 
-//export { auth };
+GoogleSignin.configure({
+  webClientId: { googleWebClient },
+});
+
 export const db = getFirestore(app);
 
 const storage = getStorage(app);

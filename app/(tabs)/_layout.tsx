@@ -16,6 +16,7 @@ export default function _layout() {
         },
       }}
     >
+      
       <Tabs.Screen
         name="gallery"
         options={{

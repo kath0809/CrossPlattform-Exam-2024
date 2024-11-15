@@ -3,13 +3,16 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   User,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithCredential
 } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/firebaseConfig";
+import { GoogleSignin, isSuccessResponse } from "@react-native-google-signin/google-signin";
 
 const auth = getAuth();
-// TODO: Change norwegian comments to english, guuurl
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 // Function to handle registration of new useer.
 export const registerUser = async (
   email: string,
@@ -72,3 +75,21 @@ export const loginUser = async (
     return { success: false, msg };
   }
 };
+
+export const googleSignIn = async () => {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const response = await GoogleSignin.signIn();
+    if (isSuccessResponse(response)) {
+      const user = GoogleSignin.getCurrentUser();
+      if (user) {
+        const googleCredential = GoogleAuthProvider.credential(user.idToken);
+        const userCredential = await signInWithCredential(auth, googleCredential);
+        console.log("User signed in with Google: ", userCredential.user.email + " " + userCredential.user.displayName);
+      }
+    }
+    
+  } catch (error) {
+    console.log("Error logging in user with google.", error);
+  }
+}
