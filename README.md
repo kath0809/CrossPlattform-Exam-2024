@@ -1,6 +1,15 @@
+## TO RUN PROJECT:
+```
+npx expo prebuild --platform ios --clean
+```
+
+
 # TODO
 [] Delete posts
-[] LocationComponent
+
+[] LocationComponent?
+
+[] Google sign in
 
 
 ## Installed Dependencies
@@ -34,10 +43,9 @@ to show map on web:
 + https://www.npmjs.com/package/@teovilla/react-native-web-maps 
 + npm add @teovilla/react-native-web-maps
 
-
-expo google signin
-ios bundle identifier
-com.artvista32.kryssplattform
+Expo google sign in
+https://docs.expo.dev/guides/google-authentication/
+npx expo install @react-native-google-signin/google-signin
 ---
 
 ## Images

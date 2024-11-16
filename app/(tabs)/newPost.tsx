@@ -24,12 +24,9 @@ import { uploadImagesToFirebase } from "@/api/imageApi";
 import InputComponent from "@/components/InputComponent";
 import useLocation from "@/components/LocationComponent";
 
-type PostFormProps = {
-  closeModal: () => void;
-};
 
-export default function PostForm({ closeModal }: PostFormProps) {
-  // I've got error trying to upload mutiple images the soulution was to set the image's local and the dowloaded url to a state that i can set to null after the post is created.
+export default function PostForm() {
+  // I've got error trying to upload mutiple images the soulution was to set the image's local and the dowloaded url to a state that i can set it to null after the post is created.
   const [localImages, setLocalImages] = useState<string[]>([]);
   const [downloadURLs, setDownloadURLs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -39,9 +36,8 @@ export default function PostForm({ closeModal }: PostFormProps) {
   const [categoryText, setcategoryText] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
-  const { coordinates, locationAddress, statusText, getLocation } =
-    useLocation();
-  const { user } = useAuth();
+  const { coordinates, locationAddress, getLocation } = useLocation();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     getLocation();
