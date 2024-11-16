@@ -118,15 +118,6 @@ export default function PostDetail() {
     }
   };
 
-  const handleAuthorProfile = () => {
-    router.push({
-      pathname: "/userProfile",
-      params: {
-        userId: post?.authorId,
-      },
-    });
-  };
-
   const handleDeleteComment = async (commentId: string) => {
     Alert.alert(
       "Delete comment",
@@ -141,6 +132,36 @@ export default function PostDetail() {
           onPress: async () => {
             await commentApi.deleteComment(commentId, post?.id ?? "");
             setPostComments(postComments.filter((c) => c.id !== commentId));
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const handleDeleteArtWork = async () => {
+    Alert.alert(
+      "Delete ArtPost",
+      "Are you sure you want to delete this ArtPost?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: async () => {
+            if (post && post.authorId === user?.uid) {
+              try {
+                await postApi.deletePost(post.id);
+                router.back();
+              } catch (error) {
+                console.error("Error deleting ArtPost", error);
+                Alert.alert("Error", "Failed to delete ArtPost");
+              }
+            } else {
+              Alert.alert("Error", "You are not the owner of this ArtPost");
+            }
           },
         },
       ],
@@ -178,13 +199,40 @@ export default function PostDetail() {
           style={{ paddingTop: hp(8) }}
           className="flex-1 justify-center gap-6"
         >
-          <View style={{ position: "relative" }}>
+          <View
+            style={{
+              position: "relative",
+              flexDirection: "row",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              height: 40,
+            }}
+          >
+            {/* Back Button */}
             <Pressable
               onPress={() => router.push("/(tabs)/gallery")}
-              style={{ left: 16, zIndex: 10, paddingBottom: 8 }}
+              style={{ flexDirection: "row", alignItems: "center" }}
             >
               <Ionicons name="arrow-back" size={24} color="black" />
             </Pressable>
+
+            {/* Delete Button */}
+            {post?.authorId === user?.uid && (
+              <Pressable
+                onPress={handleDeleteArtWork}
+                style={{
+                  position: "absolute",
+                  right: 16, // Align to the right edge
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="trash" size={24} color="red" />
+              </Pressable>
+            )}
+          </View>
+
+          <View className="flex-1">
             <ScrollView
               horizontal
               pagingEnabled
@@ -302,7 +350,7 @@ export default function PostDetail() {
               ))
             )}
             {post && (
-              <View style={{ width: "100%", height: 200, paddingBottom: 45}}>
+              <View style={{ width: "100%", height: 200, paddingBottom: 45 }}>
                 <MapComponent
                   initialRegion={{
                     latitude: post?.postCoordinates?.latitude ?? 0,
@@ -310,7 +358,6 @@ export default function PostDetail() {
                     latitudeDelta: 0.0082,
                     longitudeDelta: 0.0081,
                   }}
-                  
                 >
                   <Marker
                     coordinate={{

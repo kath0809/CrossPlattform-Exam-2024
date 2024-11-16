@@ -60,7 +60,7 @@ export const getPostById = async (id: string) => {
 export const deletePost = async (id: string) => {
   try {
     await deleteDoc(doc(db, "posts", id));
-    console.log("Document successfully deleted!");
+    console.log("Document deleted!");
   } catch (e) {
     console.error("Error removing document: ", e);
   }
@@ -99,23 +99,7 @@ export const toggleLike = async (id: string, userId: string) => {
   await updateDoc(postRef, { likes: updatedLikes });
 };
 
-// export const getAuthorById = async (authorId: string): Promise<Author> => {
-//   const authorDocRef = doc(db, "users", authorId); // Assuming the collection is "users"
-//   const authorDoc = await getDoc(authorDocRef);
-
-//   if (!authorDoc.exists()) {
-//     throw new Error("Author not found");
-//   }
-
-//   const authorData = authorDoc.data();
-
-//   return {
-//     authorId: authorId,
-//     authorName: authorData.username, // Fetch `username` instead of `name`
-//     profileImage: authorData.profileImage || "", // Adjust this field as needed
-//   } as Author;
-// };
-
+// To show an artist profile.
 export const getAuthorById = async (authorId: string): Promise<Author> => {
   const authorDocRef = doc(db, "users", authorId);
   const authorDoc = await getDoc(authorDocRef);
@@ -128,7 +112,7 @@ export const getAuthorById = async (authorId: string): Promise<Author> => {
 
   return {
     authorId: authorId,
-    authorName: authorData.username, // Assuming the username field is stored as `username`
-    profileImage: authorData.profileImage || "", // Use a default image if not set
+    authorName: authorData.username,
+    profileImage: authorData.profileImage || "",
   } as Author;
 };
