@@ -37,7 +37,7 @@ export default function PostForm() {
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const { coordinates, locationAddress, getLocation } = useLocation();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     getLocation();
