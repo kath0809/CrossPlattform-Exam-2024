@@ -1,4 +1,4 @@
-import { PostData } from "@/utils/postData";
+import { Author, PostData } from "@/utils/postData";
 import {
   addDoc,
   collection,
@@ -70,6 +70,7 @@ export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
   const postRef = collection(db, "posts");
   const q = query(postRef, where("authorId", "==", authorId));
   const querySnapshot = await getDocs(q);
+
   const posts: PostData[] = [];
   querySnapshot.forEach((doc) => {
     posts.push({
@@ -96,4 +97,38 @@ export const toggleLike = async (id: string, userId: string) => {
     : [...likes, userId];
 
   await updateDoc(postRef, { likes: updatedLikes });
+};
+
+// export const getAuthorById = async (authorId: string): Promise<Author> => {
+//   const authorDocRef = doc(db, "users", authorId); // Assuming the collection is "users"
+//   const authorDoc = await getDoc(authorDocRef);
+
+//   if (!authorDoc.exists()) {
+//     throw new Error("Author not found");
+//   }
+
+//   const authorData = authorDoc.data();
+
+//   return {
+//     authorId: authorId,
+//     authorName: authorData.username, // Fetch `username` instead of `name`
+//     profileImage: authorData.profileImage || "", // Adjust this field as needed
+//   } as Author;
+// };
+
+export const getAuthorById = async (authorId: string): Promise<Author> => {
+  const authorDocRef = doc(db, "users", authorId);
+  const authorDoc = await getDoc(authorDocRef);
+
+  if (!authorDoc.exists()) {
+    throw new Error("Author not found");
+  }
+
+  const authorData = authorDoc.data();
+
+  return {
+    authorId: authorId,
+    authorName: authorData.username, // Assuming the username field is stored as `username`
+    profileImage: authorData.profileImage || "", // Use a default image if not set
+  } as Author;
 };

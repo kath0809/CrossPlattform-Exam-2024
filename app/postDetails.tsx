@@ -20,14 +20,15 @@ import * as postApi from "@/api/postApi";
 import * as commentApi from "@/api/commentApi";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuth } from "@/providers/authContext";
-import MapView, { Marker } from "react-native-maps";
+import { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "@/components/LoadingComponent";
+import MapComponent from "@/components/MapComponent";
 
 const { width } = Dimensions.get("window");
 
 export default function PostDetail() {
-  const { postId } = useLocalSearchParams();
+  const { postId, id } = useLocalSearchParams();
   const { user, isAuthenticated } = useAuth();
   const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,9 @@ export default function PostDetail() {
             Array.isArray(postId) ? postId[0] : postId
           );
           setPost(fetchedPost);
-          const comments = await commentApi.getCommentsByIds(fetchedPost.comments);
+          const comments = await commentApi.getCommentsByIds(
+            fetchedPost.comments
+          );
           if (comments) {
             setPostComments(comments);
           }
@@ -57,8 +60,8 @@ export default function PostDetail() {
         setLoading(false);
       }
     };
-// If user is anonymous, return error message. Should have added a function to let the user register or sign in an save the pro
-// But i found that to be too difficult.
+    // If user is anonymous, return error message. Should have added a function to let the user register or sign in an save the pro
+    // But i found that to be too difficult.
     if (!isAuthenticated || user?.isAnonymous) {
       Alert.alert(
         "Access Denied",
@@ -91,7 +94,7 @@ export default function PostDetail() {
 
   const handleNewComment = async () => {
     if (!commentText.trim()) return;
-    
+
     setLoading(true);
     try {
       const commentData = {
@@ -99,37 +102,51 @@ export default function PostDetail() {
         authorName: user?.username ?? "",
         comment: commentText.trim(),
       };
-      const commentId = await commentApi.addComment(post?.id ?? "", commentData);
+      const commentId = await commentApi.addComment(
+        post?.id ?? "",
+        commentData
+      );
       setPostComments([
         ...postComments,
         { id: commentId ?? "", comment: commentData },
       ]);
       setCommentText("");
-
-    } catch(error) {
+    } catch (error) {
       console.error("Error adding comment", console.error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleAuthorProfile = () => {
+    router.push({
+      pathname: "/userProfile",
+      params: {
+        userId: post?.authorId,
+      },
+    });
+  };
 
   const handleDeleteComment = async (commentId: string) => {
-    Alert.alert("Delete comment", "Are you sure you want to delete this comment?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "Delete",
-        onPress: async () => {
-          await commentApi.deleteComment(commentId, post?.id ?? "");
-          setPostComments(postComments.filter((c) => c.id !== commentId));
+    Alert.alert(
+      "Delete comment",
+      "Are you sure you want to delete this comment?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
         },
-      },
-    ],
-    { cancelable: false }
-  );
-  }
+        {
+          text: "Delete",
+          onPress: async () => {
+            await commentApi.deleteComment(commentId, post?.id ?? "");
+            setPostComments(postComments.filter((c) => c.id !== commentId));
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <View className="flex-1">
@@ -222,7 +239,18 @@ export default function PostDetail() {
             </View>
           </View>
           <View className="px-4">
-            <Text className="text-neutral-700 pb-2">{post?.author}</Text>
+            <Pressable
+              onPress={() =>
+                router.push(`/userProfile?authorId=${post?.authorId}`)
+              }
+            >
+              <Text
+                className="text-sky-800 font-bold pb-2"
+                style={{ fontSize: 18 }}
+              >
+                {post?.author}
+              </Text>
+            </Pressable>
             <Text className="text-2xl font-bold mb-2">{post?.title}</Text>
             <Text className="text-base text-gray-700 mb-2">
               {post?.description}
@@ -256,7 +284,7 @@ export default function PostDetail() {
                 >
                   <View className="flex-row flex-wrap">
                     <Text className="text-gray-700 font-semibold mr-1">
-                      {comment.comment.authorName}:
+                      {comment.comment.authorName} :
                     </Text>
                     <Text className="text-gray-600">
                       {comment.comment.comment}
@@ -274,14 +302,15 @@ export default function PostDetail() {
               ))
             )}
             {post && (
-                <MapView
+              <View style={{ width: "100%", height: 200, paddingBottom: 45}}>
+                <MapComponent
                   initialRegion={{
                     latitude: post?.postCoordinates?.latitude ?? 0,
                     longitude: post?.postCoordinates?.longitude ?? 0,
                     latitudeDelta: 0.0082,
                     longitudeDelta: 0.0081,
                   }}
-                  style={{ width: "100%", height: 200 }}
+                  
                 >
                   <Marker
                     coordinate={{
@@ -291,7 +320,8 @@ export default function PostDetail() {
                     title={post?.title}
                     onPress={() => router.push("/(tabs)/map")}
                   />
-                </MapView>
+                </MapComponent>
+              </View>
             )}
           </View>
         </View>
@@ -300,15 +330,14 @@ export default function PostDetail() {
   );
 }
 
-
 const styles = StyleSheet.create({
   carousel: {
     width: width,
-    height: width * 0.6, // Reduce the height of the carousel
+    height: width * 0.6,
   },
   image: {
     width: width,
-    height: width * 0.6, // Matches the reduced height of the carousel
+    height: width * 0.6,
   },
   dotContainer: {
     flexDirection: "row",

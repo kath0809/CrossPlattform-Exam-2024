@@ -27,3 +27,9 @@ export interface CommentData {
   authorName: string;
   comment: string;
 }
+
+export interface Author {
+  authorId: string;
+  authorName: string;
+  profileImage: string;
+}
