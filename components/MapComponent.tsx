@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
-import { Platform, View } from "react-native";
-import MapView, { Marker, Region } from "react-native-maps";
+import { Platform } from "react-native";
+import MapView, { Region } from "react-native-maps";
 import WebMap from "@teovilla/react-native-web-maps";
 import { googleMapsApiKey } from "@/googleApiKeyEnv";
 
@@ -29,7 +29,7 @@ const MapComponent = forwardRef<MapView, MapComponentProps>(
     } else {
       return (
         <MapView
-          ref={ref} // Forwarding the ref to MapView
+          ref={ref}
           initialRegion={initialRegion}
           style={{
             width: "100%",
