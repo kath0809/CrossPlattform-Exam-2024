@@ -40,7 +40,7 @@ export default function PostForm() {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // To deny access to the new post from the profileHeader
+  // To deny access to the new post from the profileHeader.
   useEffect(() => {
     if (!isAuthenticated || user?.isAnonymous) {
       Alert.alert(
@@ -122,13 +122,15 @@ export default function PostForm() {
             className="rounded-3xl overflow-hidden w-full h-80 justify-center items-center border-custom-orange border-2"
           >
             {images.length > 0 ? (
-              images.map((imageUri, index) => (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              { images.map((imageUri, index) => (
                 <Image
                   key={index}
                   source={{ uri: imageUri }}
-                  style={{ resizeMode: "cover", width: "100%", height: 300 }}
+                  style={{ resizeMode: "cover", width: 115, height: 300 }}
                 />
-              ))
+              ))}
+              </ScrollView>
             ) : (
               <EvilIcons name="image" size={80} color="gray" />
             )}
