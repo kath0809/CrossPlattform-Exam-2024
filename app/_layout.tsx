@@ -4,7 +4,7 @@ import "../global.css";
 import { AuthContextProvider, useAuth } from "@/providers/authContext";
 
 const MainLayout = () => {
-  const { isAuthenticated } = useAuth() as { isAuthenticated: boolean };
+  const { isAuthenticated } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -26,7 +26,6 @@ const MainLayout = () => {
 export default function RootLayout() {
   return (
     // Wrap the AuthContextProvider around the MainLayout component to ensure that the AuthContextProvider is available to all child components.
-    
     <AuthContextProvider>
       <MainLayout />
     </AuthContextProvider>

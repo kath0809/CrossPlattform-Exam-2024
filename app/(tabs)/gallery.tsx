@@ -45,7 +45,9 @@ export default function Gallery() {
       });
     } else {
       console.log("User is signed in as anonymous");
-      Alert.alert("You need to be signed in to view the post");
+      Alert.alert(
+        "Access Denied",
+        "You need to be signed in to view the post");
     }
   };
 

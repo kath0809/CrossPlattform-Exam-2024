@@ -132,12 +132,13 @@ export default function ProfileHeader() {
               </Text>
             ) : (
               <Text
-                className="font-bold color-custom-blue mb-2"
+                className="font-bold color-custom-orange mb-2"
                 style={{ fontSize: 24 }}
               >
-                Guest user
+                Signed in as Anonymous
               </Text>
             )}
+            {user && !user.isAnonymous && (
             <View>
               <Image
                 style={{
@@ -152,6 +153,7 @@ export default function ProfileHeader() {
                 transition={500}
               />
             </View>
+            )}
             <ScrollView>
               <View className="flex flex-row flex-wrap justify-center pt-10">
                 {userPosts.map((post) => (

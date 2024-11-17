@@ -18,7 +18,7 @@ import { EvilIcons, MaterialIcons, Octicons } from "@expo/vector-icons";
 import * as postApi from "@/api/postApi";
 import { useAuth } from "@/providers/authContext";
 import LoadingComponent from "@/components/LoadingComponent";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import SelectImageModal from "@/components/ImageComponent";
 import { uploadImagesToFirebase } from "@/api/imageApi";
 import InputComponent from "@/components/InputComponent";
@@ -37,7 +37,33 @@ export default function PostForm() {
   const [images, setImages] = useState<string[]>([]);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const { coordinates, locationAddress, getLocation } = useLocation();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // To deny access to the new post from the profileHeader
+  useEffect(() => {
+    if (!isAuthenticated || user?.isAnonymous) {
+      Alert.alert(
+        "Access Denied",
+        "You need to be signed in to create a new post",
+        [
+          {
+            text: "Sign In",
+            onPress: () => router.push("/signIn"),
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => router.push("/(tabs)/gallery"),
+          },
+        ]
+      );
+    }
+  }, [isAuthenticated, user]);
+
+  if (!isAuthenticated || user?.isAnonymous) {
+    return null;
+  }
 
   useEffect(() => {
     getLocation();

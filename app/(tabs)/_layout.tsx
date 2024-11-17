@@ -2,8 +2,12 @@ import { Tabs } from "expo-router";
 import React from "react";
 import { Fontisto, Octicons } from "@expo/vector-icons";
 import ProfileHeader from "@/components/ProfileHeader";
+import { useAuth } from "@/providers/authContext";
+import { Alert } from "react-native";
 
 export default function _layout() {
+const { user } = useAuth();
+
   return (
     <Tabs
       screenOptions={{
@@ -16,7 +20,6 @@ export default function _layout() {
         },
       }}
     >
-      
       <Tabs.Screen
         name="gallery"
         options={{
@@ -52,6 +55,21 @@ export default function _layout() {
             />
           ),
         }}
+        listeners={() => ({
+          tabPress: (e) => {
+            console.log("User", user);
+            if (!user || user.isAnonymous) {
+              console.log(
+                "Preventing access to new post tab for anonymous user"
+              );
+              e.preventDefault();
+              Alert.alert(
+                "Access Denied",
+                "Anonymous users cannot upload new art pieces. Please sign in to upload your art."
+              );
+            }
+          },
+        })}
       />
       <Tabs.Screen
         name="map"
@@ -70,6 +88,21 @@ export default function _layout() {
             />
           ),
         }}
+        listeners={() => ({
+          tabPress: (e) => {
+            console.log("User", user);
+            if (!user || user.isAnonymous) {
+              console.log(
+                "Preventing access to map tab for anonymous user"
+              );
+              e.preventDefault();
+              Alert.alert(
+                "Access Denied",
+                "Anonymous users dont have access to the map. Please sign in to view the map."
+              );
+            }
+          },
+        })}
       />
     </Tabs>
   );

@@ -59,6 +59,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setUser({
           uid: firebaseUser.uid,
           email: firebaseUser.email!,
+          isAnonymous: firebaseUser.isAnonymous,
           ...userData,
         } as User);
       } else {
