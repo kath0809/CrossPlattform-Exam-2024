@@ -208,15 +208,12 @@ export default function PostDetail() {
               height: 40,
             }}
           >
-            {/* Back Button */}
             <Pressable
               onPress={() => router.push("/(tabs)/gallery")}
               style={{ flexDirection: "row", alignItems: "center" }}
             >
               <Ionicons name="arrow-back" size={24} color="black" />
             </Pressable>
-
-            {/* Delete Button */}
             {post?.authorId === user?.uid && (
               <Pressable
                 onPress={handleDeleteArtWork}
@@ -231,7 +228,6 @@ export default function PostDetail() {
               </Pressable>
             )}
           </View>
-
           <View className="flex-1">
             <ScrollView
               horizontal

@@ -52,6 +52,7 @@ export default function Gallery() {
   };
 
   const getPostsFromBackend = async () => {
+    setRefresh(true);
     const posts = await postApi.getAllPosts();
     // Sorter på tittel
     const sortedPosts = posts.sort((a, b) => a.title.localeCompare(b.title));
@@ -60,6 +61,7 @@ export default function Gallery() {
     /* Sorter på dato/tid */
     //const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     //setPosts(sortedPosts);
+    setRefresh(false);
   };
 
   useEffect(() => {
@@ -116,7 +118,7 @@ export default function Gallery() {
   return (
     <ScrollView
       refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={refresh} onRefresh={getPostsFromBackend} />
       }
     >
       <View className="p-4">

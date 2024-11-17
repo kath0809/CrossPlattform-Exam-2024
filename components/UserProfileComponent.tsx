@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { getUserPosts, getAuthorById } from "@/api/postApi";
 import { router, useLocalSearchParams } from "expo-router";
 import { PostData, Author } from "@/utils/postData";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "./LoadingComponent";
-
 
 export default function UserProfileComponent() {
   const [author, setAuthor] = useState<Author | null>(null);
@@ -39,15 +32,20 @@ export default function UserProfileComponent() {
   }, [authorId]);
 
   if (loading) {
-    return <LoadingComponent size={30} />;
+    return (
+      <View className="flex-1 justify-center items-center bg-black/90">
+        <LoadingComponent size={wp(25)} />
+      </View>
+    );
   }
 
   if (!author) {
     return (
-      <Text>
-        Artist profile is not available.
-        This user may not exist or has no posts.
-      </Text>
+      <View className="flex-1 justify-center items-center bg-black/90">
+        <Text className="text-white">
+          Artist profile is not available.
+        </Text>
+      </View>
     );
   }
 
@@ -62,7 +60,7 @@ export default function UserProfileComponent() {
         <View className="inset-0" />
         <Pressable
           onPress={() => router.back()}
-          className="top-10 left-4"
+          className="absolute  top-10 left-4"
         >
           <Ionicons name="arrow-back" size={30} color="black" />
         </Pressable>
@@ -95,5 +93,3 @@ export default function UserProfileComponent() {
     </View>
   );
 }
-
-
