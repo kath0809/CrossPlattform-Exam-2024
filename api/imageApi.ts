@@ -8,7 +8,7 @@ export const uploadImagesToFirebase = async (uris: string[]) => {
 
   for (const uri of uris) {
     try {
-      // Fetch the image data as a blob
+      // Fetch the image data as a Blob (Binary Large Object). Blob is used to store binary data like images in this case.
       const fetchResponse = await fetch(uri);
       const blob = await fetchResponse.blob();
 
@@ -33,5 +33,6 @@ export const uploadImagesToFirebase = async (uris: string[]) => {
     }
   }
   console.log("Completed uploads, URLs:", uploadURLs);
-  return uploadURLs; // Array of download URLs for each uploaded image
+  return uploadURLs;
+  // Array of download URLs for each uploaded image
 };

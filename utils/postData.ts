@@ -16,7 +16,6 @@ export interface PostData {
   createdAt: Date;
 }
 
-
 export interface CommentObject {
   id: string;
   comment: CommentData;

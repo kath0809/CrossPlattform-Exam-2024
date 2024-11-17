@@ -21,20 +21,20 @@ export const registerUser = async (
   profileImage: string
 ): Promise<{ success: boolean; msg?: string; data?: User }> => {
   try {
-    // Opprett brukeren med e-post og passord
+    // Create user with email and password
     const response = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
 
-    // Oppdater brukerprofilen med displayName og photoURL
+    // Update user profile with displayName and photoURL.
     await updateProfile(response.user, {
       displayName: username,
       photoURL: profileImage,
     });
 
-    // Lagre ekstra brukerinformasjon i Firestore under "users"-samlingen
+    // Store extra user information in Firestore under "users" collection
     await setDoc(doc(db, "users", response.user.uid), {
       username,
       profileImage,
@@ -45,7 +45,7 @@ export const registerUser = async (
   } catch (error: any) {
     console.log("Error registering user: ", error.message);
 
-    // Brukervennlige feilmeldinger
+    // Handle user friendly feedback from firebase auth error. 
     let msg = error.message;
     if (msg.includes("(auth/invalid-email)"))
       msg = "Invalid email, please try again";
@@ -75,7 +75,7 @@ export const loginUser = async (
     return { success: false, msg };
   }
 };
-
+// Function to handle sign in with Google account using Google Sign In.
 export const googleSignIn = async () => {
   try {
     await GoogleSignin.hasPlayServices();
@@ -90,6 +90,6 @@ export const googleSignIn = async () => {
     }
     
   } catch (error) {
-    console.log("Error logging in user with google.", error);
+    console.log("Error logging in user with Google.", error);
   }
 }

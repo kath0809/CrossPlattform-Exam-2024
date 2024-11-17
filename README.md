@@ -5,11 +5,8 @@ npx expo prebuild --platform ios --clean
 
 
 # TODO
-[] Delete posts
-
-[] LocationComponent?
-
-[] Google sign in
+Rename all POSTS AND AUTHOR to
+art something and artist
 
 
 ## Installed Dependencies

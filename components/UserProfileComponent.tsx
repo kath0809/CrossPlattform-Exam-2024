@@ -9,15 +9,10 @@ import {
 } from "react-native";
 import { getUserPosts, getAuthorById } from "@/api/postApi";
 import { router, useLocalSearchParams } from "expo-router";
-import { PostData } from "@/utils/postData";
+import { PostData, Author } from "@/utils/postData";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingComponent from "./LoadingComponent";
 
-
-interface Author {
-  authorName: string;
-  profileImage: string;
-  location?: string;
-}
 
 export default function UserProfileComponent() {
   const [author, setAuthor] = useState<Author | null>(null);
@@ -44,13 +39,14 @@ export default function UserProfileComponent() {
   }, [authorId]);
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return <LoadingComponent size={30} />;
   }
 
   if (!author) {
     return (
       <Text>
-        Author profile not available. This user may not exist or has no posts.
+        Artist profile is not available.
+        This user may not exist or has no posts.
       </Text>
     );
   }
