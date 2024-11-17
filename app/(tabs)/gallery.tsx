@@ -70,17 +70,10 @@ export default function Gallery() {
 
   useEffect(() => {
     const filtered = posts.filter((post) =>
-      post.category.toLowerCase().includes(searchQuery.toLowerCase()) 
-      //post.author.toLowerCase().includes(searchQuery.toLowerCase())
+      post.category.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPosts(filtered);
   }, [searchQuery, posts]);
-
-  const handleRefresh = async () => {
-    setRefresh(true);
-    await getPostsFromBackend();
-    setRefresh(false);
-  };
 
   const renderItem = ({ item }: { item: PostData }) => (
     <View className="flex-1 p-1">
