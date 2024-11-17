@@ -175,7 +175,7 @@ export default function SignIn() {
               style={{ fontSize: hp(2) }}
               className="font-medium text-neutral-200"
             >
-              Sign in with?{" "}
+              Sign in with your{" "}
             </Text>
             <Pressable onPress={async () => {
               await authApi.googleSignIn();
@@ -187,7 +187,7 @@ export default function SignIn() {
                 accessibilityHint="Press to sign in anonymously"
                 accessibilityRole="button"
               >
-                google
+                Google Account
               </Text>
             </Pressable>
           </View>
