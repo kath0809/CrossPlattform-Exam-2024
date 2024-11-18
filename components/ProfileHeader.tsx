@@ -5,12 +5,10 @@ import {
   Platform,
   TouchableOpacity,
   Modal,
-  StyleSheet,
   Alert,
   ScrollView,
 } from "react-native";
 import {
-  widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
@@ -23,7 +21,8 @@ import { router } from "expo-router";
 import * as postApi from "@/api/postApi";
 import { PostData } from "@/utils/postData";
 
-const ios = Platform.OS === "ios"; // This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
+// This is a boolean that checks if the platform is iOS or not. It is used to determine the top padding.
+const ios = Platform.OS === "ios";
 
 export default function ProfileHeader() {
   const { top } = useSafeAreaInsets(); // This is the top padding for iSO devices.
@@ -55,7 +54,7 @@ export default function ProfileHeader() {
     );
   };
 
-  // FEtch the user's posts from postApi
+  // FEtch the user's posts from postApi to show the user's artwork in the profile.
   useEffect(() => {
     const fetchUserPosts = async () => {
       if (user && user.uid) {
@@ -90,16 +89,24 @@ export default function ProfileHeader() {
         Hi, {user?.username}
       </Text>
 
-      {/* When clicking the image, open this modal */}
+      {/* When clicking the profile image, open this modal */}
       <Modal
         animationType="slide"
-        transparent={false}
+        transparent={true} // Set to true so the user can see the page they opened the modal from.
         visible={isModalVisible}
         onRequestClose={() => {
           setIsModalVisible(false);
         }}
       >
-        <View style={[styles.modalContainer, { backgroundColor: "#000000e5" }]}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-start",
+            alignItems: "center",
+            backgroundColor: "#000000e5",
+            paddingTop: Platform.OS === "ios" ? 50 : 20,
+          }}
+        >
           <View className="flex-row justify-between w-full px-4 py-3">
             <TouchableOpacity
               className="p-2"
@@ -122,7 +129,13 @@ export default function ProfileHeader() {
               <Octicons name="sign-out" size={24} color="#f5a442" />
             </TouchableOpacity>
           </View>
-          <View style={styles.modalContent}>
+          <View
+            style={{
+              width: "100%",
+              padding: 20,
+              alignItems: "center",
+            }}
+          >
             {user?.username ? (
               <Text
                 className="font-bold color-custom-orange mb-2"
@@ -139,20 +152,20 @@ export default function ProfileHeader() {
               </Text>
             )}
             {user && !user.isAnonymous && (
-            <View>
-              <Image
-                style={{
-                  height: hp(20),
-                  aspectRatio: 1,
-                  borderRadius: 10,
-                  borderColor: "#f5a442",
-                  borderWidth: 2,
-                }}
-                source={user?.profileImage}
-                placeholder={{ blurhash }}
-                transition={500}
-              />
-            </View>
+              <View>
+                <Image
+                  style={{
+                    height: hp(20),
+                    aspectRatio: 1,
+                    borderRadius: 10,
+                    borderColor: "#f5a442",
+                    borderWidth: 2,
+                  }}
+                  source={user?.profileImage}
+                  placeholder={{ blurhash }}
+                  transition={500}
+                />
+              </View>
             )}
             <ScrollView>
               <View className="flex flex-row flex-wrap justify-center pt-10">
@@ -162,7 +175,12 @@ export default function ProfileHeader() {
                       <Image
                         key={index}
                         source={{ uri: imageURL }}
-                        style={styles.image}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          margin: 5,
+                          borderRadius: 15,
+                        }}
                       />
                     ))}
                   </View>
@@ -176,23 +194,3 @@ export default function ProfileHeader() {
   );
 }
 
-const styles = StyleSheet.create({
-  image: {
-    width: 100,
-    height: 100,
-    margin: 5,
-    borderRadius: 15,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    backgroundColor: "white",
-    paddingTop: Platform.OS === "ios" ? 50 : 20,
-  },
-  modalContent: {
-    width: "100%",
-    padding: 20,
-    alignItems: "center",
-  },
-});

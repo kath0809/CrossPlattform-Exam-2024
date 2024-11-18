@@ -7,13 +7,12 @@ import {
   Image,
   Alert,
   ScrollView,
-  StyleSheet,
   Pressable,
   TextInput,
   View,
   Text,
-  Dimensions,
   StatusBar,
+  useWindowDimensions,
 } from "react-native";
 import { CommentObject, PostData } from "@/utils/postData";
 import * as postApi from "@/api/postApi";
@@ -24,13 +23,10 @@ import { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "@/components/LoadingComponent";
 import MapComponent from "@/components/MapComponent";
-import { auth } from "@/firebaseConfig";
-
-const { width } = Dimensions.get("window");
 
 export default function PostDetail() {
-  const { postId, id } = useLocalSearchParams();
-  const { user, isAuthenticated, logout} = useAuth();
+  const { postId } = useLocalSearchParams();
+  const { user, isAuthenticated, logout } = useAuth();
   const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -39,6 +35,7 @@ export default function PostDetail() {
   const [commentText, setCommentText] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [numLikes, setNumLikes] = useState(0);
+  const { width } = useWindowDimensions(); // Adjust the carousel to the width of the screen. This is good for responsiveness. https://reactnative.dev/docs/usewindowdimensions
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -249,7 +246,10 @@ export default function PostDetail() {
                 <Image
                   key={index}
                   source={{ uri: imageURL }}
-                  style={styles.image}
+                  style={{
+                    width: width,
+                    height: width * 0.6,
+                  }}
                   resizeMode="cover"
                   accessibilityLabel={`Image ${index + 1} of ${
                     post.imageURLs.length
@@ -302,6 +302,7 @@ export default function PostDetail() {
           </View>
           <View className="px-4">
             <Pressable
+              className="rounded-md px-2 py-1 bg-transparent"
               accessibilityLabel="View artist profile"
               accessibilityHint="Navigates to the artist's profile"
               accessibilityRole="button"
@@ -310,8 +311,8 @@ export default function PostDetail() {
               }
             >
               <Text
-                className="text-sky-800 font-bold pb-2"
-                style={{ fontSize: 18 }}
+                className="text-sky-800 font-bold pb-2 underline"
+                style={{ fontSize: 16 }}
               >
                 {post?.author}
               </Text>
@@ -344,33 +345,32 @@ export default function PostDetail() {
                 )}
               </Pressable>
             </View>
-              {postComments.map((comment) => (
-                <View
-                  key={comment.id}
-                  className="flex-row justify-between items-center mb-2 p-3 rounded-lg bg-gray-100 shadow-sm"
-                >
-                  <View className="flex-row flex-wrap">
-                    <Text className="text-gray-700 font-semibold mr-1">
-                      {comment.comment.authorName} :
-                    </Text>
-                    <Text className="text-gray-600">
-                      {comment.comment.comment}
-                    </Text>
-                  </View>
-                  {comment.comment.authorId === user?.uid && (
-                    <Pressable
-                      accessibilityLabel="Delete comment"
-                      accessibilityHint="Delete the comment"
-                      accessibilityRole="button"
-                      onPress={() => handleDeleteComment(comment.id)}
-                      className="ml-2"
-                    >
-                      <Ionicons name="trash-outline" color={"red"} size={20} />
-                    </Pressable>
-                  )}
+            {postComments.map((comment) => (
+              <View
+                key={comment.id}
+                className="flex-row justify-between items-center mb-2 p-3 rounded-lg bg-gray-100 shadow-sm"
+              >
+                <View className="flex-row flex-wrap">
+                  <Text className="text-gray-700 font-semibold mr-1">
+                    {comment.comment.authorName} :
+                  </Text>
+                  <Text className="text-gray-600">
+                    {comment.comment.comment}
+                  </Text>
                 </View>
-              ))
-            }
+                {comment.comment.authorId === user?.uid && (
+                  <Pressable
+                    accessibilityLabel="Delete comment"
+                    accessibilityHint="Delete the comment"
+                    accessibilityRole="button"
+                    onPress={() => handleDeleteComment(comment.id)}
+                    className="ml-2"
+                  >
+                    <Ionicons name="trash-outline" color={"red"} size={20} />
+                  </Pressable>
+                )}
+              </View>
+            ))}
             {/* Map view, showing the posts position with a pressable marker. */}
             {post && (
               <View style={{ width: "100%", height: 200, paddingBottom: 45 }}>
@@ -402,21 +402,3 @@ export default function PostDetail() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: width,
-    height: width * 0.6,
-  },
-  dotContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#bbb",
-  },
-});

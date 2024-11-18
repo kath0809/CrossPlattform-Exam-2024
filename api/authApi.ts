@@ -76,6 +76,7 @@ export const loginUser = async (
   }
 };
 // Function to handle sign in with Google account using Google Sign In.
+// From lecture code.
 export const googleSignIn = async () => {
   try {
     await GoogleSignin.hasPlayServices();

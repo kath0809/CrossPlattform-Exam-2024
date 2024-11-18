@@ -38,6 +38,8 @@ const { user } = useAuth();
           ),
         }}
       />
+      {/* Listeners makes it possible to protect the tab from being accessed by anonymous users.
+       if the user is anonymous, the tab will not be accessible and a alert will be shown to the user. */}
       <Tabs.Screen
         name="newPost"
         options={{
@@ -92,9 +94,7 @@ const { user } = useAuth();
           tabPress: (e) => {
             console.log("User", user);
             if (!user || user.isAnonymous) {
-              console.log(
-                "Preventing access to map tab for anonymous user"
-              );
+              console.log("Preventing access to map tab for anonymous user");
               e.preventDefault();
               Alert.alert(
                 "Access Denied",

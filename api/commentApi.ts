@@ -2,7 +2,8 @@ import { db } from "@/firebaseConfig";
 import { CommentData, CommentObject } from "@/utils/postData";
 import { addDoc, collection, doc, updateDoc, arrayUnion, arrayRemove, deleteDoc, getDoc } from "firebase/firestore";
 
-
+// This code is copied from the lecture code.
+// As this is whats needed to add, show and delete a comment, i see no reason to change it.
 export const addComment = async (postId: string, comment: CommentData) => {
   try {
     const commentRef = await addDoc(collection(db, "comments"), comment);

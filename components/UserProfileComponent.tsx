@@ -7,6 +7,8 @@ import { PostData, Author } from "@/utils/postData";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "./LoadingComponent";
 
+// This component displays the diffrent artists profile and their uploaded artworks.
+
 export default function UserProfileComponent() {
   const [author, setAuthor] = useState<Author | null>(null);
   const [posts, setPosts] = useState<PostData[]>([]);
@@ -16,9 +18,10 @@ export default function UserProfileComponent() {
   useEffect(() => {
     const fetchAuthorData = async () => {
       try {
+        // Fetch the author profile by authorId(Artist)
         const authorProfile = await getAuthorById(authorId as string);
         setAuthor(authorProfile);
-
+        // Then fetch the posts by authorId, to display the artworks
         const userPosts = await getUserPosts(authorId as string);
         setPosts(userPosts);
       } catch (error) {
@@ -27,7 +30,6 @@ export default function UserProfileComponent() {
         setLoading(false);
       }
     };
-
     fetchAuthorData();
   }, [authorId]);
 
@@ -51,6 +53,23 @@ export default function UserProfileComponent() {
 
   return (
     <View className="flex-1 bg-black/90">
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1,
+          }}
+        >
+          <LoadingComponent size={wp(25)} />
+        </View>
+      )}
       <View className="h-2/6 justify-center items-center relative">
         <Image
           source={require("@/assets/images/profileBack.png")}
@@ -60,7 +79,7 @@ export default function UserProfileComponent() {
         <View className="inset-0" />
         <Pressable
           onPress={() => router.back()}
-          className="absolute  top-10 left-4"
+          className="absolute top-10 left-4 pt-4"
         >
           <Ionicons name="arrow-back" size={30} color="black" />
         </Pressable>

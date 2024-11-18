@@ -18,7 +18,7 @@ import { EvilIcons, MaterialIcons, Octicons } from "@expo/vector-icons";
 import * as postApi from "@/api/postApi";
 import { useAuth } from "@/providers/authContext";
 import LoadingComponent from "@/components/LoadingComponent";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import SelectImageModal from "@/components/ImageComponent";
 import { uploadImagesToFirebase } from "@/api/imageApi";
 import InputComponent from "@/components/InputComponent";
@@ -40,7 +40,7 @@ export default function PostForm() {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // To deny access to the new post from the profileHeader.
+  // To deny access to the new post screen from the profileHeader.
   useEffect(() => {
     if (!isAuthenticated || user?.isAnonymous) {
       Alert.alert(
@@ -183,6 +183,8 @@ export default function PostForm() {
                       if (uploadedImagePaths.length === 0) {
                         throw new Error("There was an error uploading images");
                       }
+                      // Every post is created with all the data needed to display it properly in the gallery.
+                      // Set author to be the user's username, and authorId to be the user's uid(linking them together).
                       const newPost: PostData = {
                         postCoordinates: coordinates,
                         title: titleText,
@@ -197,10 +199,10 @@ export default function PostForm() {
                         likes: [],
                         createdAt: new Date(),
                       };
-
+                      // When the post is created, set all fields back to null, and navigate to the gallery.
                       await postApi.createPost(newPost);
-                      setLocalImages([]); // Reset the local images state
-                      setDownloadURLs([]); // Reset download URLs if stored separately
+                      setLocalImages([]);
+                      setDownloadURLs([]);
                       setImages([]);
                       getLocation();
                       setTitleText("");
@@ -209,7 +211,6 @@ export default function PostForm() {
                       router.push("/(tabs)/gallery");
                     } catch (error) {
                       console.error("Error creating post", error);
-
                       const errorMessage =
                         error instanceof Error
                           ? error.message

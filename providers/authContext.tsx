@@ -19,8 +19,6 @@ interface User {
   
 }
 
-const auth = getAuth();
-
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
@@ -37,6 +35,8 @@ interface AuthContextType {
   ) => Promise<{ success: boolean; msg?: string; data?: User }>;
   anonymousSignIn: () => Promise<void>;
 }
+
+const auth = getAuth();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -77,7 +77,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
-  // Firebase logout function.
   const logout = async () => {
     try {
       await signOut(auth);

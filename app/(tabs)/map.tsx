@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Pressable, Platform, ScrollView, Text } from "react-native";
+import { View, StyleSheet, Pressable, Platform, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
+import * as posApi from "@/api/postApi";
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { PostData } from "@/utils/postData";
-import * as posApi from "@/api/postApi";
 import MapComponent from "@/components/MapComponent";
 
 export default function Map() {
@@ -13,7 +13,7 @@ export default function Map() {
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(0.1);
+  const [zoomLevel, setZoomLevel] = useState(0.5);
   const [isZoomedIn, setIsZoomedIn] = useState(false);
   const [posts, setPosts] = useState<PostData[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
@@ -62,7 +62,7 @@ export default function Map() {
   };
 
   const zoomIn = () => {
-    const newZoomLevel = Math.max(zoomLevel / 2, 0.005);
+    const newZoomLevel = Math.max(zoomLevel / 1.5, 0.005);
     setZoomLevel(newZoomLevel);
     mapRef.current?.animateToRegion(
       {
@@ -120,14 +120,12 @@ export default function Map() {
           ) : null
         )}
       </MapComponent>
-
-      {/* Filter markers on category´s */}
       <View className="absolute top-5 flex-row flex-wrap px-3">
         {[
+          // Set the categories to filter by.
           "Sport Photography",
           "Sky Photography",
           "Abstract Art",
-          "Pop Art",
           "Digital Art",
         ].map((filter) => (
           <Pressable
@@ -147,7 +145,7 @@ export default function Map() {
       </View>
 
       {/* Zoom in/out/toggle location buttons */}
-      {/* Since the map for map allready have buttons to handle zoom i decided to hide them if its not on ios or android. */}
+      {/* Since the map for web allready have buttons to handle zoom i decided to hide them if its not on ios or android. */}
       {Platform.OS === "ios" && (
         <View className="absolute top-5 right-1 items-end px-3 gap-2">
           <Pressable

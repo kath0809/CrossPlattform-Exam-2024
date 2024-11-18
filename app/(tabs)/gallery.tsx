@@ -4,13 +4,12 @@ import {
   View,
   Text,
   Image,
-  StyleSheet,
   ScrollView,
   Alert,
-  TouchableOpacity,
   TextInput,
   Pressable,
   RefreshControl,
+  useWindowDimensions,
 } from "react-native";
 import * as postApi from "@/api/postApi";
 import { auth } from "@/firebaseConfig";
@@ -20,9 +19,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/providers/authContext";
 
 export default function Gallery() {
+  const { width } = useWindowDimensions();
+  // Adjust the carousel to the width of the screen. This is good for responsiveness. https://reactnative.dev/docs/usewindowdimensions
   const [posts, setPosts] = useState<PostData[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<PostData[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredPosts, setFilteredPosts] = useState(posts);
+  const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const router = useRouter();
@@ -37,6 +38,9 @@ export default function Gallery() {
     };
   }, []);
 
+  // Control if the user is signed in with anonymous or not.
+  // If the user is signed in with credentials, the user wil get to open the path to postDetails.
+  // Promt an alert if the user is signed in as anonymous and deny access.
   const handleImageDetails = (post: PostData) => {
     if (user && !user.isAnonymous) {
       router.push({
@@ -65,6 +69,7 @@ export default function Gallery() {
     }
   };
 
+  // Get all posts from the backend and sort them by title.
   const getPostsFromBackend = async () => {
     setRefresh(true);
     const posts = await postApi.getAllPosts();
@@ -78,13 +83,15 @@ export default function Gallery() {
     setRefresh(false);
   };
 
+  // When the page is loaded, get all posts from the api(postApi/getAllPosts) and set the state of posts.
   useEffect(() => {
     getPostsFromBackend();
   }, []);
 
+  // Filter the posts by the search query.
   useEffect(() => {
     const filtered = posts.filter((post) =>
-      post.category.toLowerCase().includes(searchQuery.toLowerCase())
+      post.author.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPosts(filtered);
   }, [searchQuery, posts]);
@@ -104,12 +111,18 @@ export default function Gallery() {
           {/* All images uploaded to firebase for the purpose of not delivering an empty app are downloaded
           from https://www.freepik.com in the period of 01.11 - 12.11 2024 */}
           {item.imageURLs.map((image) => (
-            <TouchableOpacity
-              key={image}
-              onPress={() => handleImageDetails(item)}
-            >
-              <Image key={image} source={{ uri: image }} style={styles.image} />
-            </TouchableOpacity>
+            <Pressable key={image} onPress={() => handleImageDetails(item)}>
+              <Image
+                key={image}
+                source={{ uri: image }}
+                style={{
+                  width: 300,
+                  height: 200,
+                  borderRadius: 10,
+                  marginRight: 10,
+                }}
+              />
+            </Pressable>
           ))}
         </ScrollView>
         <View className="flex-row justify-between items-center mt-2">
@@ -131,7 +144,7 @@ export default function Gallery() {
       <View className="p-4">
         <View className="flex-row items-center">
           <TextInput
-            placeholder="Search category..."
+            placeholder="Search after artist..."
             placeholderTextColor={"gray"}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -144,21 +157,16 @@ export default function Gallery() {
           </Pressable>
         </View>
       </View>
-      {filteredPosts.map((post) => (
-        <View key={post.id}>{renderItem({ item: post })}</View>
-      ))}
+      <ScrollView
+        showsHorizontalScrollIndicator={true}
+        style={{ height: width * 2 }}
+        accessibilityLabel="Posts carousel"
+        accessibilityHint="Swipe left or right to view posts"
+      >
+        {filteredPosts.map((post) => (
+          <View key={post.id}>{renderItem({ item: post })}</View>
+        ))}
+      </ScrollView>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: 300,
-    height: 200,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  carousel: {
-    height: 200,
-  },
-});

@@ -12,7 +12,10 @@ import {
 } from "firebase/firestore";
 import { db, getDownloadUrl } from "@/firebaseConfig";
 import { uploadImagesToFirebase } from "@/api/imageApi";
+import { blurhash } from "@/utils/common";
 
+// Functions to create, read, update and delete ++ posts in the firebase database "posts" collection.
+// Most of the functions are copied from the lecture code. I see no reason to change them, as they provide the functionality needed.
 export const createPost = async (post: PostData) => {
   try {
     const firebaseImages = await uploadImagesToFirebase(post.imageURLs);
@@ -30,8 +33,8 @@ export const createPost = async (post: PostData) => {
     };
     const docRef = await addDoc(collection(db, "posts"), postWithImageData);
     console.log("Document written with ID:", docRef.id);
-  } catch (e) {
-    console.log("Error adding document", e);
+  } catch (error) {
+    console.log("Error adding document", error);
   }
 };
 
@@ -61,25 +64,9 @@ export const deletePost = async (id: string) => {
   try {
     await deleteDoc(doc(db, "posts", id));
     console.log("Document deleted!");
-  } catch (e) {
-    console.error("Error removing document: ", e);
+  } catch (error) {
+    console.error("Error removing document: ", error);
   }
-};
-
-export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
-  const postRef = collection(db, "posts");
-  const q = query(postRef, where("authorId", "==", authorId));
-  const querySnapshot = await getDocs(q);
-
-  const posts: PostData[] = [];
-  querySnapshot.forEach((doc) => {
-    posts.push({
-      id: doc.id,
-      ...doc.data(),
-    } as PostData);
-  });
-  console.log("Fetched user posts:", posts);
-  return posts;
 };
 
 export const toggleLike = async (id: string, userId: string) => {
@@ -99,6 +86,22 @@ export const toggleLike = async (id: string, userId: string) => {
   await updateDoc(postRef, { likes: updatedLikes });
 };
 
+// To show a signed in users images in their profile, and to show other artists images in their profile.
+export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
+  const postRef = collection(db, "posts");
+  const q = query(postRef, where("authorId", "==", authorId));
+  const querySnapshot = await getDocs(q);
+
+  const posts: PostData[] = [];
+  querySnapshot.forEach((doc) => {
+    posts.push({
+      id: doc.id,
+      ...doc.data(),
+    } as PostData);
+  });
+  console.log("Fetched user posts:", posts);
+  return posts;
+};
 // To show an artist profile.
 export const getAuthorById = async (authorId: string): Promise<Author> => {
   const authorDocRef = doc(db, "users", authorId);

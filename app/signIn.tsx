@@ -4,7 +4,6 @@ import {
   View,
   Image,
   Text,
-  TouchableOpacity,
   Pressable,
   Alert,
   ScrollView,
@@ -120,7 +119,7 @@ export default function SignIn() {
             />
           </View>
           <View>
-            <TouchableOpacity
+            <Pressable
               onPress={handleLogin}
               style={{ height: hp(6.5) }}
               className="bg-custom-orange rounded-xl justify-center items-center"
@@ -133,7 +132,7 @@ export default function SignIn() {
               >
                 Sign In
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <View className="flex-row justify-center">
