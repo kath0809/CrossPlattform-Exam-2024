@@ -24,12 +24,13 @@ import { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingComponent from "@/components/LoadingComponent";
 import MapComponent from "@/components/MapComponent";
+import { auth } from "@/firebaseConfig";
 
 const { width } = Dimensions.get("window");
 
 export default function PostDetail() {
   const { postId, id } = useLocalSearchParams();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout} = useAuth();
   const [post, setPost] = useState<PostData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -60,12 +61,24 @@ export default function PostDetail() {
         setLoading(false);
       }
     };
-    // If user is anonymous, return error message. Should have added a function to let the user register or sign in an save the pro
-    // But i found that to be too difficult.
+    // If user is anonymous, return error message.
     if (!isAuthenticated || user?.isAnonymous) {
       Alert.alert(
         "Access Denied",
-        "You need to be signed in to view this post."
+        "You need to be signed in to view this post.",
+        [
+          {
+            onPress: async () => {
+              await logout();
+              router.push("/signIn");
+            },
+          },
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => router.push("/(tabs)/gallery"),
+          },
+        ]
       );
     } else {
       fetchPost();
@@ -170,6 +183,7 @@ export default function PostDetail() {
   };
 
   return (
+    // Full screen LoadingComponent while loading.
     <View className="flex-1">
       <StatusBar barStyle="dark-content" />
       {loading && (
@@ -199,30 +213,23 @@ export default function PostDetail() {
           style={{ paddingTop: hp(8) }}
           className="flex-1 justify-center gap-6"
         >
-          <View
-            style={{
-              position: "relative",
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: 16,
-              height: 40,
-            }}
-          >
+          <View className="relative flex-row items-center px-4 h-10">
             <Pressable
               onPress={() => router.push("/(tabs)/gallery")}
-              style={{ flexDirection: "row", alignItems: "center" }}
+              className="flex-row items-center"
+              accessibilityLabel="Go back"
+              accessibilityHint="Navigates back to the gallery"
+              accessibilityRole="button"
             >
               <Ionicons name="arrow-back" size={24} color="black" />
             </Pressable>
             {post?.authorId === user?.uid && (
               <Pressable
                 onPress={handleDeleteArtWork}
-                style={{
-                  position: "absolute",
-                  right: 16, // Align to the right edge
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                accessibilityLabel="Delete ArtPost"
+                accessibilityHint="Deletes the ArtPost"
+                accessibilityRole="button"
+                className="absolute right-4 items-center justify-center"
               >
                 <Ionicons name="trash" size={24} color="red" />
               </Pressable>
@@ -233,7 +240,10 @@ export default function PostDetail() {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              style={styles.carousel}
+              className="w-full"
+              style={{ height: width * 0.6 }}
+              accessibilityLabel="Image carousel"
+              accessibilityHint="Swipe left or right to view more images"
             >
               {post?.imageURLs.map((imageURL, index) => (
                 <Image
@@ -241,12 +251,16 @@ export default function PostDetail() {
                   source={{ uri: imageURL }}
                   style={styles.image}
                   resizeMode="cover"
+                  accessibilityLabel={`Image ${index + 1} of ${
+                    post.imageURLs.length
+                  }`}
                 />
               ))}
             </ScrollView>
             <View className="flex-row items-center px-2">
               <View className="flex-1 flex-row justify-center">
-                {/* The "dots" under the carousel, shos one dot for 1image, two dots for 2 images... */}
+                {/* The "dots" under the carousel, shos one dot for 1image,
+                two dots for 2 images... */}
                 {post?.imageURLs && post.imageURLs.length > 1 && (
                   <View className="flex-row justify-center py-2">
                     {post.imageURLs.map((_, index) => (
@@ -258,11 +272,15 @@ export default function PostDetail() {
                   </View>
                 )}
               </View>
-              {/* If user hasnt liked the post, its an outline icon, if its liked by the user - its a filled orange heart */}
+              {/* If user hasnt liked the post, its an outline icon,
+              if its liked by the user - its a filled orange heart */}
               <View className="flex-row items-center justify-end">
                 <Pressable
                   onPress={handleLikePress}
                   className="flex-row items-center"
+                  accessibilityLabel="Like"
+                  accessibilityHint="Like or unlike the ArtPost"
+                  accessibilityRole="button"
                 >
                   {isLiked ? (
                     <Ionicons
@@ -284,6 +302,9 @@ export default function PostDetail() {
           </View>
           <View className="px-4">
             <Pressable
+              accessibilityLabel="View artist profile"
+              accessibilityHint="Navigates to the artist's profile"
+              accessibilityRole="button"
               onPress={() =>
                 router.push(`/userProfile?authorId=${post?.authorId}`)
               }
@@ -302,6 +323,8 @@ export default function PostDetail() {
             <Text className="text-lg font-bold mb-2">Comments</Text>
             <View className="flex-row items-center mt-3 p-2 rounded-md bg-gray-50 shadow-inner">
               <TextInput
+                accessibilityLabel="Add a comment"
+                accessibilityHint="Type a comment and press the post button"
                 value={commentText}
                 onChangeText={setCommentText}
                 placeholder="Add a comment..."
@@ -309,6 +332,9 @@ export default function PostDetail() {
               />
               <Pressable
                 onPress={handleNewComment}
+                accessibilityLabel="Post comment"
+                accessibilityHint="Post the comment"
+                accessibilityRole="button"
                 className="ml-2 bg-custom-orange rounded-md px-4 py-2"
               >
                 {loadingAddComment ? (
@@ -318,10 +344,7 @@ export default function PostDetail() {
                 )}
               </Pressable>
             </View>
-            {loading ? (
-              <LoadingComponent size={30} />
-            ) : (
-              postComments.map((comment) => (
+              {postComments.map((comment) => (
                 <View
                   key={comment.id}
                   className="flex-row justify-between items-center mb-2 p-3 rounded-lg bg-gray-100 shadow-sm"
@@ -336,6 +359,9 @@ export default function PostDetail() {
                   </View>
                   {comment.comment.authorId === user?.uid && (
                     <Pressable
+                      accessibilityLabel="Delete comment"
+                      accessibilityHint="Delete the comment"
+                      accessibilityRole="button"
                       onPress={() => handleDeleteComment(comment.id)}
                       className="ml-2"
                     >
@@ -344,7 +370,8 @@ export default function PostDetail() {
                   )}
                 </View>
               ))
-            )}
+            }
+            {/* Map view, showing the posts position with a pressable marker. */}
             {post && (
               <View style={{ width: "100%", height: 200, paddingBottom: 45 }}>
                 <MapComponent
@@ -362,6 +389,9 @@ export default function PostDetail() {
                     }}
                     title={post?.title}
                     onPress={() => router.push("/(tabs)/map")}
+                    accessibilityLabel="View on map"
+                    accessibilityHint="Navigates to the map view"
+                    accessibilityRole="button"
                   />
                 </MapComponent>
               </View>
@@ -374,10 +404,6 @@ export default function PostDetail() {
 }
 
 const styles = StyleSheet.create({
-  carousel: {
-    width: width,
-    height: width * 0.6,
-  },
   image: {
     width: width,
     height: width * 0.6,
@@ -385,13 +411,12 @@ const styles = StyleSheet.create({
   dotContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    paddingVertical: 8,
+    
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: "#bbb",
-    marginHorizontal: 4,
   },
 });
