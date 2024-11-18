@@ -4,7 +4,6 @@ import {
   View,
   Image,
   Text,
-  TouchableOpacity,
   Pressable,
   Alert,
   ScrollView,
@@ -28,34 +27,6 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const { register, login } = useAuth();
-
-  /*   const handleRegister = async () => {
-    if (
-      !emailRef.current ||
-      !passwordRef.current ||
-      !usernameRef.current ||
-      !profileRef.current
-    ) {
-      Alert.alert(
-        "Could not register",
-        "Please choose a username, email and password"
-      );
-      return;
-    }
-    // Then, if both fields are filled, call the register function
-    setLoading(true);
-    let response = await register(
-      emailRef.current,
-      passwordRef.current,
-      usernameRef.current,
-      profileRef.current
-    );
-    setLoading(false);
-    console.log("New user registred with: ", response);
-    if (!response.success) {
-      Alert.alert("Could not register", response.msg);
-    }
-  }; */
 
   const handleRegister = async () => {
     if (!email || !password || !username || !profileImage) {
@@ -84,17 +55,18 @@ export default function SignUp() {
 
     if (loginResponse.success) {
       console.log("Login successful. Navigating to the home screen...");
-      router.replace("/(tabs)/gallery");
+      router.replace("/(tabs)/gallery"); // Navigate to the gallery feed after sign in.
     } else {
       Alert.alert("Login failed", loginResponse.msg);
     }
   };
 
+  // Not using the imageComponent here because i only want it to be possible to upload one image.
   const pickImage = async () => {
     // First, ask for permission to access the user's gallery
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      // Print pop allert if permission is denied
+      // Print allert if permission is denied
       Alert.alert(
         "Permission denied",
         "To upload a profile picture, you need to grant access to your gallery"
@@ -116,6 +88,7 @@ export default function SignUp() {
   };
 
   return (
+    // Full screen Loading component
     <View className="flex-1 bg-[#000000e5]">
       <StatusBar style="light" />
       {loading && (
@@ -185,7 +158,7 @@ export default function SignUp() {
               onChangeText={setPassword}
               icon={<Octicons name="lock" size={24} color="#f5a442" />}
             />
-            <TouchableOpacity onPress={pickImage}>
+            <Pressable onPress={pickImage}>
               <InputComponent
                 accessibilityLabel="Profile picture"
                 accessibilityHint="Select a profile picture"
@@ -193,11 +166,14 @@ export default function SignUp() {
                 placeholder="Upload profile picture..."
                 icon={<Feather name="image" size={24} color="#f5a442" />}
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <View>
-            <TouchableOpacity
+            <Pressable
               onPress={handleRegister}
+              accessibilityLabel="Register"
+              accessibilityHint="Register a new account"
+              accessibilityRole="button"
               style={{ height: hp(6.5) }}
               className="bg-custom-orange rounded-xl justify-center items-center"
             >
@@ -207,7 +183,7 @@ export default function SignUp() {
               >
                 Register
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <View className="flex-row justify-center">
@@ -217,7 +193,11 @@ export default function SignUp() {
             >
               Already have an account?{" "}
             </Text>
-            <Pressable onPress={() => router.push("/signIn")}>
+            <Pressable onPress={() => router.push("/signIn")}
+              accessibilityLabel="Sign In"
+              accessibilityHint="Navigate to the sign in page"
+              accessibilityRole="button"
+              >
               <Text
                 style={{ fontSize: hp(2) }}
                 className="font-bold text-custom-orange"

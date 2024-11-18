@@ -32,6 +32,7 @@ export default function SignIn() {
 
   const handleLogin = async () => {
     if (!email || !password) {
+      // If user tries to sign in with blank fields
       Alert.alert("Could not sign in", "Email and password are required");
       return;
     }
@@ -39,6 +40,8 @@ export default function SignIn() {
     const response = await login(email, password);
     setLoading(false);
     if (!response.success) {
+      // if user tries to sign in with invalid credentials
+      // convert firebase internal error code to readable message.
       Alert.alert("Could not sign in", response.msg);
     } else {
       console.log(
@@ -49,6 +52,8 @@ export default function SignIn() {
     }
   };
 
+  // An anonymous user is still authenticated by Firebase, without leaving email or password.
+  // So inside the authprovider an anonymous user is given credentials like a signed in user.
   const handleAnonymousSignIn = async () => {
     await anonymousSignIn();
   }
