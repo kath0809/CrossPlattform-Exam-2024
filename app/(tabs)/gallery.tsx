@@ -52,20 +52,6 @@ export default function Gallery() {
     } else {
       console.log("User is signed in as anonymous");
       Alert.alert("Access Denied", "You need to be signed in to view the post");
-      [
-        {
-          text: "Sign In",
-          onPress: async () => {
-            await logout();
-            router.push("/signIn");
-          },
-        },
-        {
-          text: "Cancel",
-          style: "cancel",
-          onPress: () => router.push("/(tabs)/gallery"),
-        },
-      ];
     }
   };
 
