@@ -7,6 +7,7 @@ import {
   Pressable,
   Alert,
   ScrollView,
+  Platform,
 } from "react-native";
 import {
   widthPercentageToDP as wp,
@@ -27,7 +28,6 @@ export default function SignIn() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -55,7 +55,7 @@ export default function SignIn() {
   // So inside the authprovider an anonymous user is given credentials like a signed in user.
   const handleAnonymousSignIn = async () => {
     await anonymousSignIn();
-  }
+  };
 
   return (
     <View className="flex-1 bg-[#000000e5]">
@@ -173,28 +173,32 @@ export default function SignIn() {
               </Text>
             </Pressable>
           </View>
-
-          <View className="flex-row justify-center">
-            <Text
-              style={{ fontSize: hp(2) }}
-              className="font-medium text-neutral-200"
-            >
-              Sign in with your{" "}
-            </Text>
-            <Pressable onPress={async () => {
-              await authApi.googleSignIn();
-            }}>
+          {/* Since Google sign in is only setup for iOS devices - hide it on other platforms */}
+          {Platform.OS === "ios" && (
+            <View className="flex-row justify-center">
               <Text
                 style={{ fontSize: hp(2) }}
-                className="font-bold text-custom-orange"
-                accessibilityLabel="Sign in anonymously"
-                accessibilityHint="Press to sign in anonymously"
-                accessibilityRole="button"
+                className="font-medium text-neutral-200"
               >
-                Google Account
+                Sign in with your{" "}
               </Text>
-            </Pressable>
-          </View>
+              <Pressable
+                onPress={async () => {
+                  await authApi.googleSignIn();
+                }}
+              >
+                <Text
+                  style={{ fontSize: hp(2) }}
+                  className="font-bold text-custom-orange"
+                  accessibilityLabel="Sign in anonymously"
+                  accessibilityHint="Press to sign in anonymously"
+                  accessibilityRole="button"
+                >
+                  Google Account
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
