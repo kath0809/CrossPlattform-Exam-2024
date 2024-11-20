@@ -2,12 +2,9 @@
 
 > [!NOTE]
 > ### TO RUN THE PROJECT:
+
 > ```
-> npx expo prebuild --platform ios --clean
-> ```
-> then:
-> ```
-> npm run start
+> npm run ios
 > ```
 ---
 
@@ -30,8 +27,11 @@ https://www.npmjs.com/package/react-native-responsive-screen
 * expo-image-picker (for image uploads)
 https://docs.expo.dev/versions/latest/sdk/imagepicker/
 
+* expo camera
+https://docs.expo.dev/versions/latest/sdk/camera/
+
 * expo image (For only loading image once)
-https://docs.expo.dev/versions/latest/sdk/image/
+https://docs.expo.dev/versions/latest/sdk/image/c
 
 * Expo map
 https://docs.expo.dev/versions/latest/sdk/map-view/
@@ -45,6 +45,9 @@ https://docs.expo.dev/guides/google-authentication/
 ---
 
 ### Images Used
+- SplashScreen Icon, App Icon and Fav Icon:
+Generated with ChatGpt and edited in Figma.
+
 Images statically used in the application:
 - SignIn.tsx - Dowloaded from freepik(11/06/2024)
 (https://www.freepik.com/free-photo/tattooed-young-man-with-pierced-ear-nose-holding-flower-bouquet-front-his-face_4371175.htm)
