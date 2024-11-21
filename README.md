@@ -9,24 +9,26 @@
 >
 > Install the app as a standalone application outside Expo Go
 > ```
-> npx expo prebuild --platform ios --clean (this shold not be necessary)
+> npx expo prebuild --platform ios --clean   (this shold not be necessary, but just in case)
 >
 > npm run ios
 > ```
 ---
 
 Registered firebase user you can use:
+```
 mail: sonny@mail.com
-password: 123456
 
+password: 123456
+```
 If registrering a new user, the simulator needs to be refreshed to show the new users name and profile picture in the header.
 
-
+---
 This solution has been tested on the following platforms:
-- Web
+- Web (Safari and Chrome)
 - iOS 13 Pro external device
 - iOS simulator (iPhone 15 Pro)
-- Android emulator (Pixel 8 Pro) While testing, the Android emulator crashed after implementing Google Sign-In for iOS. I attempted to resolve the issue using platform-specific functions and imports, but without success. The issue could likely be resolved by installing SHA keys for Android.
+- Android emulator (Pixel 8 Pro) While testing, the Android emulator crashed after implementing Google Sign-In for iOS. I attempted to resolve the issue using platform-specific functions and imports, but without success. The issue could likely be resolved by installing SHA keys for Android, but I have chosen to focus on iOS and web instead.
 
 
 Application functionality:
