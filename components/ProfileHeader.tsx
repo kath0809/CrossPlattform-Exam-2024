@@ -167,23 +167,27 @@ export default function ProfileHeader() {
               </View>
             )}
             <ScrollView>
-              <View className="flex flex-row flex-wrap justify-center pt-10">
-                {userPosts.map((post) => (
-                  <View key={post.id}>
-                    {post.imageURLs.map((imageURL, index) => (
+              <View className="flex flex-wrap flex-row justify-center pt-10">
+                {userPosts.map((post) =>
+                  post.imageURLs.map((imageURL, index) => (
+                    <View
+                      key={`${post.id}-${index}`}
+                      style={{
+                        width: "30%", // Setter bredden slik at 3 bilder får plass per rad
+                        margin: "1.5%", // Gir margin for å skape avstand mellom bildene
+                      }}
+                    >
                       <Image
-                        key={index}
                         source={{ uri: imageURL }}
                         style={{
-                          width: 100,
+                          width: "100%",
                           height: 100,
-                          margin: 5,
                           borderRadius: 15,
                         }}
                       />
-                    ))}
-                  </View>
-                ))}
+                    </View>
+                  ))
+                )}
               </View>
             </ScrollView>
           </View>

@@ -12,9 +12,7 @@ import {
   useWindowDimensions,
   FlatList,
 } from "react-native";
-import {
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import * as postApi from "@/api/postApi";
 import { auth } from "@/firebaseConfig";
 import { User } from "@firebase/auth";
@@ -163,7 +161,7 @@ export default function Gallery() {
         </View>
       </View>
       <FlatList
-        data={posts}
+        data={filteredPosts}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         refreshControl={
