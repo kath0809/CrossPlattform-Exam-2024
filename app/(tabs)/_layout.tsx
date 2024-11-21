@@ -23,7 +23,7 @@ const { user } = useAuth();
       <Tabs.Screen
         name="gallery"
         options={{
-          header: () => <ProfileHeader />,
+          header: () => <ProfileHeader />, // Set the custom header for the gallery screen.
           title: "Gallery",
           tabBarLabel: "",
           tabBarIcon: ({ size, color }) => (
@@ -39,7 +39,8 @@ const { user } = useAuth();
         }}
       />
       {/* Listeners makes it possible to protect the tab from being accessed by anonymous users.
-       if the user is anonymous, the tab will not be accessible and a alert will be shown to the user. */}
+       if the user is anonymous, the tab will not be accessible and a alert will be shown to the user. 
+       Remeber that an anonymous user is authenticated in Firebase Auth. */}
       <Tabs.Screen
         name="newPost"
         options={{

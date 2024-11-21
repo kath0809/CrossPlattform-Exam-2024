@@ -2,7 +2,11 @@
 
 > [!NOTE]
 > ### TO RUN THE PROJECT:
-
+> ```
+> npm i
+> ```
+> Install nodemodule 
+>
 > ```
 > npm run ios
 > ```

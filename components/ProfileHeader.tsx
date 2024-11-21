@@ -3,15 +3,14 @@ import {
   View,
   Text,
   Platform,
-  TouchableOpacity,
   Modal,
   Alert,
   ScrollView,
+  Pressable,
 } from "react-native";
 import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { blurhash } from "@/utils/common";
@@ -76,7 +75,7 @@ export default function ProfileHeader() {
       style={{ paddingTop: ios ? top : top + 10 }}
       className="flex-row-reverse justify-between px-5 bg-custom-orange shadow pb-3 rounded-br-l"
     >
-      <TouchableOpacity onPress={() => setIsModalVisible(true)}>
+      <Pressable onPress={() => setIsModalVisible(true)}>
         {/* Use expo image so that the image only gets loaded once */}
         <Image
           style={{ height: hp(4.5), aspectRatio: 1, borderRadius: 100 }}
@@ -84,7 +83,7 @@ export default function ProfileHeader() {
           placeholder={{ blurhash }}
           transition={200}
         />
-      </TouchableOpacity>
+      </Pressable>
       <Text className="text-neutral-800 text-lg font-bold mt-3">
         Hi, {user?.username}
       </Text>
@@ -108,7 +107,7 @@ export default function ProfileHeader() {
           }}
         >
           <View className="flex-row justify-between w-full px-4 py-3">
-            <TouchableOpacity
+            <Pressable
               className="p-2"
               onPress={() => {
                 setIsModalVisible(false);
@@ -116,18 +115,18 @@ export default function ProfileHeader() {
               }}
             >
               <Octicons name="diff-added" size={24} color="#f5a442" />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               className="p-2"
               onPress={() => {
                 setIsModalVisible(false);
               }}
             >
               <AntDesign name="close" size={24} color="#f5a442" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout} className="p-2">
+            </Pressable>
+            <Pressable onPress={handleLogout} className="p-2">
               <Octicons name="sign-out" size={24} color="#f5a442" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <View
             style={{

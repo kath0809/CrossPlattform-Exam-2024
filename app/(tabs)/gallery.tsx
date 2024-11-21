@@ -10,13 +10,17 @@ import {
   Pressable,
   RefreshControl,
   useWindowDimensions,
+  FlatList,
 } from "react-native";
+import {
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
 import * as postApi from "@/api/postApi";
 import { auth } from "@/firebaseConfig";
 import { User } from "@firebase/auth";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "@/providers/authContext";
+import LoadingComponent from "@/components/LoadingComponent";
 
 export default function Gallery() {
   const { width } = useWindowDimensions();
@@ -27,7 +31,7 @@ export default function Gallery() {
   const [user, setUser] = useState<User | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false);
   const router = useRouter();
-  const { logout } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -58,6 +62,7 @@ export default function Gallery() {
   // Get all posts from the backend and sort them by title.
   const getPostsFromBackend = async () => {
     setRefresh(true);
+    setLoading(true);
     const posts = await postApi.getAllPosts();
     // Sorter på tittel
     const sortedPosts = posts.sort((a, b) => a.title.localeCompare(b.title));
@@ -66,6 +71,7 @@ export default function Gallery() {
     /* Sorter på dato/tid */
     //const sortedPosts = posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     //setPosts(sortedPosts);
+    setLoading(false);
     setRefresh(false);
   };
 
@@ -122,11 +128,24 @@ export default function Gallery() {
   );
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refresh} onRefresh={getPostsFromBackend} />
-      }
-    >
+    <View className="flex-1">
+      {loading && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1,
+          }}
+        >
+          <LoadingComponent size={wp(25)} />
+        </View>
+      )}
       <View className="p-4">
         <View className="flex-row items-center">
           <TextInput
@@ -143,16 +162,18 @@ export default function Gallery() {
           </Pressable>
         </View>
       </View>
-      <ScrollView
-        showsHorizontalScrollIndicator={true}
-        style={{ height: width * 2 }}
-        accessibilityLabel="Posts carousel"
-        accessibilityHint="Swipe left or right to view posts"
-      >
-        {filteredPosts.map((post) => (
-          <View key={post.id}>{renderItem({ item: post })}</View>
-        ))}
-      </ScrollView>
-    </ScrollView>
+      <FlatList
+        data={posts}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl
+            refreshing={refresh}
+            onRefresh={getPostsFromBackend}
+          />
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+    </View>
   );
 }

@@ -62,7 +62,7 @@ export default function PostDetail() {
     if (!isAuthenticated || user?.isAnonymous) {
       Alert.alert(
         "Access Denied",
-        "You need to be signed in to view this post.",
+        "You need to be signed in to view this post."
       );
     } else {
       fetchPost();
@@ -226,6 +226,7 @@ export default function PostDetail() {
               showsHorizontalScrollIndicator={false}
               className="w-full"
               style={{ height: width * 0.6 }}
+              // style={{ height: !isNaN(width * 0.6) ? width * 0.6 : 0 }}
               accessibilityLabel="Image carousel"
               accessibilityHint="Swipe left or right to view more images"
             >

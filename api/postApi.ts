@@ -12,7 +12,6 @@ import {
 } from "firebase/firestore";
 import { db, getDownloadUrl } from "@/firebaseConfig";
 import { uploadImagesToFirebase } from "@/api/imageApi";
-import { blurhash } from "@/utils/common";
 
 // Functions to create, read, update and delete ++ posts in the firebase database "posts" collection.
 // Most of the functions are copied from the lecture code. I see no reason to change them, as they provide the functionality needed.
@@ -42,7 +41,7 @@ export const getAllPosts = async () => {
   const queryResult = await getDocs(collection(db, "posts"));
   return queryResult.docs.map((doc) => {
     const data = doc.data();
-    console.log(doc.data());
+    //console.log(doc.data());
     return {
       ...doc.data(),
       id: doc.id,
@@ -53,7 +52,7 @@ export const getAllPosts = async () => {
 
 export const getPostById = async (id: string) => {
   const specificPost = await getDoc(doc(db, "posts", id));
-  console.log("post by spesific id", specificPost.data());
+  console.log("post with id: ", specificPost.data());
   return {
     ...specificPost.data(),
     id: specificPost.id,
@@ -73,20 +72,23 @@ export const toggleLike = async (id: string, userId: string) => {
   const postRef = doc(db, "posts", id);
   const post = await getDoc(postRef);
   const postData = post.data();
-
   if (!postData) {
     throw new Error("Post not found");
   }
-
   const likes = postData.likes || [];
   const updatedLikes = likes.includes(userId)
     ? likes.filter((like: string) => like !== userId)
     : [...likes, userId];
-
   await updateDoc(postRef, { likes: updatedLikes });
 };
 
 // To show a signed in users images in their profile, and to show other artists images in their profile.
+/*
+1. Takes the authorId as input.
+2. Search all posts in the database (posts collection) where the authorId is the same as the input authorId. (where("authorId", "==", authorId))
+3. Retrieves the data, structures it into a list of postData objects
+4. Returns the list of postData objects.
+*/
 export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
   const postRef = collection(db, "posts");
   const q = query(postRef, where("authorId", "==", authorId));
@@ -99,9 +101,10 @@ export const getUserPosts = async (authorId: string): Promise<PostData[]> => {
       ...doc.data(),
     } as PostData);
   });
-  console.log("Fetched user posts:", posts);
+  //console.log("Fetched user posts:", posts);
   return posts;
 };
+
 // To show an artist profile.
 export const getAuthorById = async (authorId: string): Promise<Author> => {
   const authorDocRef = doc(db, "users", authorId);
