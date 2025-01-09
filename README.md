@@ -4,33 +4,8 @@
 https://github.com/user-attachments/assets/4775b349-a007-4e35-9dfd-d4ae9ea8c5e9
 
 
+# TDS200 Autumn 2024
 
-# TDS200 Autumn 2024, Candidate 32
-
-> [!NOTE]
-> ### TO RUN THE PROJECT:
-> ```
-> npm i
-> ```
-> downloads and installs all dependencies defined in the project's ``` package.json file. ```
->
-> Install the app as a standalone application outside Expo Go
-> ```
-> npx expo prebuild --platform ios --clean   (this shold not be necessary, but just in case)
->
-> npm run ios
-> ```
----
-
-Registered firebase user you can use:
-```
-mail: sonny@mail.com
-
-password: 123456
-```
-If registrering a new user, the simulator needs to be refreshed to show the new users name and profile picture in the header.
-
----
 This solution has been tested on the following platforms:
 - Web (Safari and Chrome)
 - iOS 13 Pro external device
